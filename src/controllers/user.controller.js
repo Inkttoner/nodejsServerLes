@@ -14,7 +14,7 @@ let userController = {
                 })
             }
             if (success) {
-                res.status(200).json({
+                res.status(201).json({
                     status: success.status,
                     message: success.message,
                     data: success.data
@@ -48,7 +48,7 @@ let userController = {
         logger.trace('userController: getById', userId)
         userService.searchUser(userId, (error, success) => {
             if (error) {
-                return next({
+                res.status(404).json({
                     status: error.status,
                     message: error.message,
                     data: {}
@@ -70,7 +70,7 @@ let userController = {
         logger.info('update user', userId, newData)
         userService.changeUser(userId, newData, (error, success) => {
             if (error) {
-                return next({
+                res.status(404).json({
                     status: error.status,
                     message: error.message,
                     data: {}
@@ -91,7 +91,7 @@ let userController = {
         logger.info('delete user', userId)
         userService.deleteUser(userId, (error, success) => {
             if (error) {
-                return next({
+                res.status(404).json({
                     status: error.status,
                     message: error.message,
                     data: {}

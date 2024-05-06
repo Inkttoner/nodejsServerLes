@@ -40,7 +40,12 @@ const database = {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
             if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+                callback(
+                    {
+                        message: `Error: id ${id} does not exist! Please enter an id below ${this._data.length}`
+                    },
+                    null
+                )
             } else {
                 callback(null, this._data[id])
             }
@@ -61,15 +66,16 @@ const database = {
         }, this._delayTime)
     },
 
-    // Voeg zelf de overige database functionaliteit toe
-    // update
-    // delete
-    // search
     update(id, newData, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
             if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+                callback(
+                    {
+                        message: `Error: id ${id} does not exist! Please enter an id below ${this._data.length}`
+                    },
+                    null
+                )
             } else {
                 // Update het item met de nieuwe data
                 this._data[id] = { ...this._data[id], ...newData }
@@ -82,7 +88,12 @@ const database = {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
             if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+                callback(
+                    {
+                        message: `Error: id ${id} does not exist! Please enter an id below ${this._data.length}`
+                    },
+                    null
+                )
             } else {
                 // Verwijder het item uit de database
                 const deletedItem = this._data.splice(id, 1)[0]

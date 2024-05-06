@@ -50,8 +50,25 @@ describe('UC201 Registreren als nieuwe user', () => {
             })
     })
 
-    it.skip('TC-201-2 Niet-valide email adres', (done) => {
-        done()
+    it('TC-201-2 Niet-valide email adres', (done) => {
+        chai.request(server)
+            .post(endpointToTest)
+            .send({
+                firstName: 'Voornaam',
+                lastName: 'Achternaam',
+                emailAdress: 'v.a.server.nl'
+            })
+            .end((err, res) => {
+                res.should.have.status(400)
+                res.body.should.be.a('object')
+                res.body.should.have.property('status').equals(400)
+                res.body.should.have
+                    .property('message')
+                    .equals('emailAdress must look like example@email.com')
+                res.body.should.have.property('data').that.is.a('object').that
+                    .is.empty
+                done()
+            })
     })
 
     it.skip('TC-201-3 Niet-valide password', (done) => {
@@ -61,10 +78,25 @@ describe('UC201 Registreren als nieuwe user', () => {
         done()
     })
 
-    it.skip('TC-201-4 Gebruiker bestaat al', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
+    it('TC-201-4 Gebruiker bestaat al', (done) => {
+        chai.request(server)
+            .post(endpointToTest)
+            .send({
+                firstName: 'Marieke',
+                lastName: 'Jansen',
+                emailAdress: 'hvd@server.nl'
+            })
+            .end((err, res) => {
+                res.should.have.status(403)
+                res.body.should.be.a('object')
+                res.body.should.have.property('status').equals(400)
+                res.body.should.have
+                    .property('message')
+                    .equals('User already exists')
+                res.body.should.have.property('data').that.is.a('object').that
+                    .is.empty
+                done()
+            })
         done()
     })
 
@@ -77,7 +109,7 @@ describe('UC201 Registreren als nieuwe user', () => {
                 emailAdress: 'v.a@server.nl'
             })
             .end((err, res) => {
-                res.should.have.status(200)
+                res.should.have.status(201)
                 res.body.should.be.a('object')
 
                 res.body.should.have.property('data').that.is.a('object')
@@ -89,6 +121,46 @@ describe('UC201 Registreren als nieuwe user', () => {
                 data.should.have.property('emailAdress')
                 data.should.have.property('id').that.is.a('number')
 
+                done()
+            })
+    })
+    it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
+        chai.request(server)
+            .get(endpointToTest + '/-1')
+            .end((err, res) => {
+                res.should.have.status(404)
+                res.body.should.be.a('object')
+                res.body.should.have.property('status').equals(404)
+                res.body.should.have
+                    .property('message')
+                    .equals(
+                        'Error: id -1 does not exist! Please enter an id below 2'
+                    )
+                res.body.should.have.property('data').that.is.a('object').that
+                    .is.empty
+                done()
+            })
+    })
+
+    it('TC-204-3  Gebruiker-ID bestaat', (done) => {
+        chai.request(server)
+            .get(endpointToTest + '/1')
+            .end((err, res) => {
+                res.should.have.status(200)
+                res.body.should.be.a('object')
+                res.body.should.have.property('data').that.is.a('object')
+                res.body.data.should.have.property('id').equals(1)
+                done()
+            })
+    })
+    it('TC-206-4 Gebruiker succesvol verwijderd', (done) => {
+        chai.request(server)
+            .delete(endpointToTest + '/1')
+            .end((err, res) => {
+                res.should.have.status(200)
+                res.body.should.be.a('object')
+                res.body.should.have.property('data').that.is.a('object')
+                res.body.data.should.have.property('id').equals(1)
                 done()
             })
     })
