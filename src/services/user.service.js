@@ -33,6 +33,45 @@ const userService = {
                 })
             }
         })
+    },
+    changeUser: (id, newData, callback) => {
+        logger.info('changeUser', id, newData)
+        database.update(id, newData, (err, data) => {
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, {
+                    message: `User with id ${id} updated.`,
+                    data: data
+                })
+            }
+        })
+    },
+    deleteUser: (id, callback) => {
+        logger.info('deleteUser', id)
+        database.delete(id, (err, data) => {
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, {
+                    message: `User with id ${id} deleted.`,
+                    data: data
+                })
+            }
+        })
+    },
+    searchUser: (id, callback) => {
+        logger.info('searchUser', id)
+        database.getById(id, (err, data) => {
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, {
+                    message: `User with id ${id} found.`,
+                    data: data
+                })
+            }
+        })
     }
 }
 

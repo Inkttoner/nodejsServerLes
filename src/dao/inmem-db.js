@@ -25,7 +25,6 @@ const database = {
     ],
 
     // Ieder nieuw item in db krijgt 'autoincrement' index.
-    // Je moet die wel zelf toevoegen aan ieder nieuw item.
     _index: 2,
     _delayTime: 500,
 
@@ -60,9 +59,37 @@ const database = {
             // met het toegevoegde item als argument, of null als er een fout is opgetreden
             callback(null, item)
         }, this._delayTime)
-    }
+    },
 
     // Voeg zelf de overige database functionaliteit toe
+    // update
+    // delete
+    // search
+    update(id, newData, callback) {
+        // Simuleer een asynchrone operatie
+        setTimeout(() => {
+            if (id < 0 || id >= this._data.length) {
+                callback({ message: `Error: id ${id} does not exist!` }, null)
+            } else {
+                // Update het item met de nieuwe data
+                this._data[id] = { ...this._data[id], ...newData }
+                callback(null, this._data[id])
+            }
+        }, this._delayTime)
+    },
+
+    delete(id, callback) {
+        // Simuleer een asynchrone operatie
+        setTimeout(() => {
+            if (id < 0 || id >= this._data.length) {
+                callback({ message: `Error: id ${id} does not exist!` }, null)
+            } else {
+                // Verwijder het item uit de database
+                const deletedItem = this._data.splice(id, 1)[0]
+                callback(null, deletedItem)
+            }
+        }, this._delayTime)
+    }
 }
 
 module.exports = database
