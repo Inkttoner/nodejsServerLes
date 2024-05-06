@@ -9,17 +9,6 @@ app.use(express.json())
 
 const port = process.env.PORT || 3000
 
-// Dit is een voorbeeld van een simpele route
-app.get('/api/info', (req, res) => {
-    console.log('GET /api/info')
-    const info = {
-        name: 'My Nodejs Express server',
-        version: '0.0.1',
-        description: 'This is a simple Nodejs Express server'
-    }
-    res.json(info)
-})
-
 // Hier komen alle routes
 app.use(userRoutes)
 
