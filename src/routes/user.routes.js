@@ -32,29 +32,41 @@ const validateUserCreateChaiShould = (req, res, next) => {
     }
 }
 
-const validateUserCreateChaiExpect = (req, res, next) => {
+const validateUserCreateChaiAssert = (req, res, next) => {
     try {
         assert(req.body.firstName, 'Missing or incorrect firstName field')
-        chai.expect(req.body.firstName).to.not.be.empty
-        chai.expect(req.body.firstName).to.be.a('string')
-        chai.expect(req.body.firstName).to.match(
-            /^[a-zA-Z]+$/,
+        assert(req.body.firstName.length > 0, 'firstName must not be empty')
+        assert(
+            typeof req.body.firstName === 'string',
             'firstName must be a string'
         )
+        assert(
+            /^[a-zA-Z]+$/.test(req.body.firstName),
+            'firstName must be a string'
+        )
+
         assert(req.body.lastName, 'Missing or incorrect lastName field')
-        chai.expect(req.body.lastName).to.not.be.empty
-        chai.expect(req.body.lastName).to.be.a('string')
-        chai.expect(req.body.lastName).to.match(
-            /^[a-zA-Z\s]+$/,
+        assert(req.body.lastName.length > 0, 'lastName must not be empty')
+        assert(
+            typeof req.body.lastName === 'string',
             'lastName must be a string'
         )
+        assert(
+            /^[a-zA-Z\s]+$/.test(req.body.lastName),
+            'lastName must be a string'
+        )
+
         assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
-        chai.expect(req.body.emailAdress).to.not.be.empty
-        chai.expect(req.body.emailAdress).to.be.a('string')
-        chai.expect(req.body.emailAdress).to.match(
-            /@/,
+        assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
+        assert(
+            typeof req.body.emailAdress === 'string',
+            'emailAdress must be a string'
+        )
+        assert(
+            /@/.test(req.body.emailAdress),
             'emailAdress must look like example@email.com'
         )
+
         logger.trace('User successfully validated')
         next()
     } catch (ex) {
@@ -84,7 +96,7 @@ const validateMailExists = (req, res, next) => {
 // Userroutes
 router.post(
     '/api/user',
-    validateUserCreateChaiExpect,
+    validateUserCreateChaiAssert,
     validateMailExists,
     userController.create
 )
