@@ -84,6 +84,18 @@ const validateUserCreateChaiExpect = (req, res, next) => {
 router.post('/api/user', validateUserCreateChaiExpect, userController.create)
 router.get('/api/user', userController.getAll)
 router.get('/api/user/:userId', userController.getById)
+router.get('/api/info', (req, res) => {
+    console.log('GET /api/info')
+    const info = {
+        name: 'My Nodejs Express server',
+        version: '0.0.1',
+        description: 'This is a simple Nodejs Express server'
+    }
+    res.json(info)
+})
+router.get('/', (req, res) => {
+    res.redirect('/api/info')
+})
 
 // Tijdelijke routes om niet bestaande routes op te vangen
 router.put('/api/user/:userId', userController.update)
