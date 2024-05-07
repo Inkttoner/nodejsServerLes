@@ -105,9 +105,10 @@ router.get('/api/user/:userId', userController.getById)
 router.get('/api/info', (req, res) => {
     console.log('GET /api/info')
     const info = {
-        name: 'My Nodejs Express server',
-        version: '0.0.1',
-        description: 'This is a simple Nodejs Express server'
+        name: 'Share a Meal API',
+        version: '0.1.0',
+        description:
+            'This is my first Nodejs Express server for the share a meal case'
     }
     res.json(info)
 })
