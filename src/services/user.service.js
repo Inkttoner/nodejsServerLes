@@ -5,21 +5,6 @@ const db = require('../dao/mysql-db')
 const userService = {
     create: (user, callback) => {
         logger.info('create user', user)
-        // database.add(user, (err, data) => {
-        //     if (err) {
-        //         logger.info(
-        //             'error creating user: ',
-        //             err.message || 'unknown error'
-        //         )
-        //         callback(err, null)
-        //     } else {
-        //         logger.trace(`User created with id ${data.id}.`)
-        //         callback(null, {
-        //             message: `User created with id ${data.id}.`,
-        //             data: data
-        //         })
-        //     }
-        // })
         db.getConnection(function (err, connection) {
             if (err) {
                 logger.error(err)
@@ -28,14 +13,16 @@ const userService = {
             }
 
             connection.query(
-                'INSERT INTO `user` (firstName, lastName, emailAdress, password, street, city ) VALUES (?, ?, ?, ?, ?, ?)',
+                'INSERT INTO `user` (firstName, lastName, emailAdress, password, street, city, isActive, phoneNumber ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     user.firstName,
                     user.lastName,
                     user.emailAdress,
                     user.password,
                     user.street,
-                    user.city
+                    user.city,
+                    user.isActive,
+                    user.phoneNumber
                 ],
                 function (error, results, fields) {
                     connection.release()
@@ -65,7 +52,7 @@ const userService = {
             }
 
             connection.query(
-                'SELECT id, firstName, lastName, emailAdress, password FROM `user`',
+                'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user`',
                 function (error, results, fields) {
                     connection.release()
 
@@ -121,7 +108,7 @@ const userService = {
                     } else {
                         // If the user exists, update it
                         connection.query(
-                        'UPDATE `user` SET firstName = ?, lastName = ?, emailAdress = ?, password = ?, street = ?, city = ? WHERE id = ?',
+                        'UPDATE `user` SET firstName = ?, lastName = ?, emailAdress = ?, password = ?, street = ?, city = ?, isActive = ?, phoneNumber = ? WHERE id = ?',
                         [
                             newData.firstName,
                             newData.lastName,
@@ -129,6 +116,8 @@ const userService = {
                             newData.password,
                             newData.street,
                             newData.city,
+                            newData.isActive,
+                            newData.phoneNumber,
                             id
                         ],
                         function (error, results, fields) {
@@ -215,7 +204,7 @@ const userService = {
             }
 
             connection.query(
-                'SELECT id, firstName, lastName, emailAdress, password FROM `user` WHERE id = ?',
+                'SELECT id, firstName, lastName, emailAdress, password, emailAdress, phoneNumber, isActive FROM `user` WHERE id = ?',
                 [userId],
                 function (error, results, fields) {
                     connection.release()
@@ -245,7 +234,7 @@ const userService = {
             }
 
             connection.query(
-                'SELECT id, firstName, lastName, emailAdress FROM `user` WHERE id = ?',
+                'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user` WHERE id = ?',
                 [userId],
                 function (error, results, fields) {
                     connection.release()
@@ -253,7 +242,12 @@ const userService = {
                     if (error) {
                         logger.error(error)
                         callback(error, null)
-                    } else {
+                    } else if (results.length === 0) {
+                        logger.debug(results)
+                        callback(null, {
+                            message: `no user found with id ${userId}.`,
+                        })
+                    }else{
                         logger.debug(results)
                         callback(null, {
                             message: `Found ${results.length} user.`,

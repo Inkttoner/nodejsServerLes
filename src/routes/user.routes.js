@@ -4,6 +4,7 @@ const chai = require('chai')
 chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
+const mealController = require('../controllers/meal.controller')
 const logger = require('../util/logger')
 const database = require('../dao/inmem-db')
 const validateToken = require('./authentication.routes').validateToken
@@ -126,6 +127,10 @@ router.get('/', (req, res) => {
 
 router.put('/api/user/:userId', validateToken, userController.update)
 router.delete('/api/user/:userId', validateToken, userController.delete)
-
+// meal routes
+router.get('/api/meal', mealController.getAll)
+router.post('/api/meal', validateToken, mealController.create)
+router.get('/api/meal/:mealId', mealController.getById)
+router.delete('/api/meal/:mealId', validateToken, mealController.delete)
 router.use(notFound)
 module.exports = router
