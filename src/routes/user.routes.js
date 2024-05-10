@@ -7,6 +7,7 @@ const userController = require('../controllers/user.controller')
 const logger = require('../util/logger')
 const database = require('../dao/inmem-db')
 const validateToken = require('./authentication.routes').validateToken
+const validateToken2 = require('./authentication.routes').validateToken2
 // const showLog = require('./authentication.routes').showLog
 
 // Tijdelijke functie om niet bestaande routes op te vangen
@@ -106,9 +107,9 @@ router.post(
     validateMailExists,
     userController.create
 )
-router.get('/api/user', showLog, userController.getAll)
+router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
-router.get('/api/user/:userId', userController.getProfile)
+router.get('/api/user/:userId', validateToken, userController.getById)
 router.get('/api/info', (req, res) => {
     console.log('GET /api/info')
     const info = {
@@ -123,8 +124,8 @@ router.get('/', (req, res) => {
     res.redirect('/api/info')
 })
 
-router.put('/api/user/:userId', userController.update)
-router.delete('/api/user/:userId', userController.delete)
+router.put('/api/user/:userId', validateToken, userController.update)
+router.delete('/api/user/:userId', validateToken, userController.delete)
 
 router.use(notFound)
 module.exports = router

@@ -28,8 +28,15 @@ const userService = {
             }
 
             connection.query(
-                'INSERT INTO `user` (firstName, lastName, emailAdress, password) VALUES (?, ?, ?, ?)',
-                [user.firstName, user.lastName, user.emailAdress, user.password],
+                'INSERT INTO `user` (firstName, lastName, emailAdress, password, street, city ) VALUES (?, ?, ?, ?, ?, ?)',
+                [
+                    user.firstName,
+                    user.lastName,
+                    user.emailAdress,
+                    user.password,
+                    user.street,
+                    user.city
+                ],
                 function (error, results, fields) {
                     connection.release()
 
@@ -78,60 +85,125 @@ const userService = {
     },
     changeUser: (id, newData, callback) => {
         logger.info('changeUser', id, newData)
-        database.update(id, newData, (err, data) => {
+        // database.update(id, newData, (err, data) => {
+        //     if (err) {
+        //         callback(err, null)
+        //     } else {
+        //         callback(null, {
+        //             message: `User with id ${id} updated.`,
+        //             data: data
+        //         })
+        //     }
+        // })
+        db.getConnection(function (err, connection) {
             if (err) {
+                logger.error(err)
                 callback(err, null)
-            } else {
-                callback(null, {
-                    message: `User with id ${id} updated.`,
-                    data: data
-                })
+                return
             }
+            connection.query(
+                'SELECT * FROM `user` WHERE id = ?',
+                [id],
+                function (error, results, fields) {
+                    logger.debug('SELECT QUERY', id)
+                    if (error) {
+                        logger.error('Error in SELECT QUERY', error)
+                        connection.release()
+                        callback(error, null)
+                    } else if (results.length === 0) {
+                        callback(null, {
+                            status: 404,
+                            message: `User not found.`,
+                            data: results
+                        })
+                        logger.debug('User not found')
+                        connection.release()
+                    } else {
+                        // If the user exists, update it
+                        connection.query(
+                        'UPDATE `user` SET firstName = ?, lastName = ?, emailAdress = ?, password = ?, street = ?, city = ? WHERE id = ?',
+                        [
+                            newData.firstName,
+                            newData.lastName,
+                            newData.emailAdress,
+                            newData.password,
+                            newData.street,
+                            newData.city,
+                            id
+                        ],
+                        function (error, results, fields) {
+                            connection.release()
+        
+                            if (error) {
+                                logger.error(error)
+                                callback(error, null)
+                            } else {
+                                logger.debug(results)
+                                callback(null, {
+                                    message: `User with id ${id} updated.`,
+                                    data: results
+                                })
+                            }
+                        }
+                    )}
+            
         })
+    })
+    
     },
     deleteUser: (id, callback) => {
         logger.info('deleteUser', id)
-        database.delete(id, (err, data) => {
+
+        db.getConnection(function (err, connection) {
             if (err) {
+                logger.error(err)
                 callback(err, null)
-            } else {
-                callback(null, {
-                    message: `User with id ${id} deleted.`,
-                    data: data
-                })
+                return
             }
+
+            // First, check if the user exists
+            connection.query(
+                'SELECT * FROM `user` WHERE id = ?',
+                [id],
+                function (error, results, fields) {
+                    logger.debug('SELECT QUERY', id)
+                    if (error) {
+                        logger.error('Error in SELECT QUERY', error)
+                        connection.release()
+                        callback(error, null)
+                    } else if (results.length === 0) {
+                        callback(null, {
+                            status: 404,
+                            message: `User not found.`,
+                            data: results
+                        })
+                        logger.debug('User not found')
+                        connection.release()
+                    } else {
+                        // If the user exists, delete it
+                        connection.query(
+                            'DELETE FROM `user` WHERE id = ?',
+                            [id],
+                            function (error, results, fields) {
+                                connection.release()
+
+                                if (error) {
+                                    logger.error('Error in DELETE QUERY', error)
+                                    callback(error, null)
+                                } else {
+                                    logger.debug(results)
+                                    callback(null, {
+                                        message: `User with id ${id} deleted.`,
+                                        data: results
+                                    })
+                                }
+                            }
+                        )
+                    }
+                }
+            )
         })
     },
-    // searchUser: (userId, callback) => {
-    //     logger.info('getProfile userId:', userId)
-
-    //     db.getConnection(function (err, connection) {
-    //         if (err) {
-    //             logger.error(err)
-    //             callback(err, null)
-    //             return
-    //         }
-
-    //         connection.query(
-    //             'SELECT id, firstName, lastName FROM `user` WHERE id = ?',
-    //             [userId],
-    //             function (error, results, fields) {
-    //                 connection.release()
-
-    //                 if (error) {
-    //                     logger.error(error)
-    //                     callback(error, null)
-    //                 } else {
-    //                     logger.debug(results)
-    //                     callback(null, {
-    //                         message: `Found ${results.length} user.`,
-    //                         data: results
-    //                     })
-    //                 }
-    //             }
-    //         )
-    //     })
-    // },
     getProfile: (userId, callback) => {
         logger.info('getProfile userId:', userId)
 
@@ -143,7 +215,37 @@ const userService = {
             }
 
             connection.query(
-                'SELECT id, firstName, lastName FROM `user` WHERE id = ?',
+                'SELECT id, firstName, lastName, emailAdress, password FROM `user` WHERE id = ?',
+                [userId],
+                function (error, results, fields) {
+                    connection.release()
+
+                    if (error) {
+                        logger.error(error)
+                        callback(error, null)
+                    } else {
+                        logger.debug(results)
+                        callback(null, {
+                            message: `Found ${results.length} user.`,
+                            data: results
+                        })
+                    }
+                }
+            )
+        })
+    },
+    getById: (userId, callback) => {
+        logger.info('getById used userId:', userId)
+
+        db.getConnection(function (err, connection) {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+
+            connection.query(
+                'SELECT id, firstName, lastName, emailAdress FROM `user` WHERE id = ?',
                 [userId],
                 function (error, results, fields) {
                     connection.release()
