@@ -43,27 +43,6 @@ let userController = {
         })
     },
 
-    getById: (req, res, next) => {
-        const userId = req.params.userId
-        logger.trace('userController: getById', userId)
-        userService.searchUser(userId, (error, success) => {
-            if (error) {
-                res.status(404).json({
-                    status: error.status,
-                    message: error.message,
-                    data: {}
-                })
-            }
-            if (success) {
-                res.status(200).json({
-                    status: success.status,
-                    message: success.message,
-                    data: success.data
-                })
-            }
-        })
-    },
-
     update: (req, res, next) => {
         const userId = req.params.userId
         const newData = req.body
@@ -100,6 +79,26 @@ let userController = {
             if (success) {
                 res.status(200).json({
                     status: success.status,
+                    message: success.message,
+                    data: success.data
+                })
+            }
+        })
+    },
+    getProfile: (req, res, next) => {
+        const userId = req.userId
+        logger.trace('getProfile for userId', userId)
+        userService.getProfile(userId, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: {}
+                })
+            }
+            if (success) {
+                res.status(200).json({
+                    status: 200,
                     message: success.message,
                     data: success.data
                 })

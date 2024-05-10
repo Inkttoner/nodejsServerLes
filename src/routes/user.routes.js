@@ -6,6 +6,8 @@ const router = express.Router()
 const userController = require('../controllers/user.controller')
 const logger = require('../util/logger')
 const database = require('../dao/inmem-db')
+const validateToken = require('./authentication.routes').validateToken
+// const showLog = require('./authentication.routes').showLog
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -14,6 +16,10 @@ const notFound = (req, res, next) => {
         message: 'Route not found',
         data: {}
     })
+}
+function showLog(req, res, next) {
+    logger.info('Log message')
+    next()
 }
 
 // Input validation function 2 met gebruik van assert
@@ -100,8 +106,9 @@ router.post(
     validateMailExists,
     userController.create
 )
-router.get('/api/user', userController.getAll)
-router.get('/api/user/:userId', userController.getById)
+router.get('/api/user', showLog, userController.getAll)
+router.get('/api/user/profile', validateToken, userController.getProfile)
+router.get('/api/user/:userId', userController.getProfile)
 router.get('/api/info', (req, res) => {
     console.log('GET /api/info')
     const info = {
@@ -115,6 +122,7 @@ router.get('/api/info', (req, res) => {
 router.get('/', (req, res) => {
     res.redirect('/api/info')
 })
+
 router.put('/api/user/:userId', userController.update)
 router.delete('/api/user/:userId', userController.delete)
 

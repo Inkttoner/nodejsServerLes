@@ -1,7 +1,7 @@
 const express = require('express')
 const userRoutes = require('./src/routes/user.routes')
 const logger = require('./src/util/logger')
-
+const authRoutes = require('./src/routes/authentication.routes').routes
 const app = express()
 
 // express.json zorgt dat we de body van een request kunnen lezen
@@ -10,6 +10,7 @@ app.use(express.json())
 const port = process.env.PORT || 3000
 
 // Hier komen alle routes
+app.use('/api/auth', authRoutes)
 app.use(userRoutes)
 
 // Route error handler
