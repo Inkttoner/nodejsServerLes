@@ -101,10 +101,12 @@ describe('Example MySql testcase', () => {
                         // 'city'
                     )
                     data[0].id.should.be.a('number').that.equals(1)
-                    data[0].firstName.should.be.a('string').that.equals('firstName')
-                    data[0].lastName.should.be.a('string').that.equals('lastName')
-                    data[0].emailAdress.should.be.a('string').that.equals('emailAdress')
-                    data[0].password.should.be.a('string').that.equals('password')
+                    data[0].firstName.should.be.a('string').that.equals('first')
+                    data[0].lastName.should.be.a('string').that.equals('last')
+                    data[0].emailAdress.should.be
+                        .a('string')
+                        .that.equals('name@server.nl')
+                    data[0].password.should.be.a('string').that.equals('secret')
                     done()
                 })
         })
