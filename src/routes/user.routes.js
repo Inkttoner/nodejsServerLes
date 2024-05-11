@@ -128,10 +128,10 @@ const validateEmailFormat = (req, res, next) => {
 // Userroutes
 router.post(
     '/api/user',
+    validateUserCreateChaiAssert,
     validateEmailFormat,
     validatePhoneNumber,
     validatePassword,
-    validateUserCreateChaiAssert,
     validateMailExists,
     userController.create
 )
