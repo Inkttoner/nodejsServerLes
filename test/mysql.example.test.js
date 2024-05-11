@@ -26,16 +26,16 @@ const CLEAR_DB = CLEAR_MEAL_TABLE + CLEAR_PARTICIPANTS_TABLE + CLEAR_USERS_TABLE
  */
 const INSERT_USER =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "first", "last", "1.name@server.nl", "Secret12", "street", "city");'
+    '(1, "first", "last", "a.name@server.nl", "Secret12", "street", "city");'
     const INSERT_USER_NO_FIRSTNAME =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "", "last", "2.name@server.nl", "Secret12", "street", "city");'
+    '(1, "", "last", "b.name@server.nl", "Secret12", "street", "city");'
     const INSERT_USER_WRONG_EMAIL =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
     '(1, "first", "last", "M.S.server", "Secret12", "street", "city");'
     const INSERT_USER_WRONG_PASSWORD =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "first", "last", "1.name@server.nl", "secret12", "street", "city");'
+    '(1, "first", "last", "a.name@server.nl", "secret12", "street", "city");'
 
 /**
  * Query om twee meals toe te voegen. Let op de cookId, die moet matchen
