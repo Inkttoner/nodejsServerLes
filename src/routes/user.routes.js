@@ -41,6 +41,9 @@ const validateUserCreateChaiShould = (req, res, next) => {
 }
 
 const validateUserCreateChaiAssert = (req, res, next) => {
+    const emailRegex = /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
+    const phoneNumberRegex = /^06[-\s]?\d{8}$/ 
     try {
         assert(req.body.firstName, 'Missing or incorrect firstName field')
         assert(req.body.firstName.length > 0, 'firstName must not be empty')
@@ -63,18 +66,6 @@ const validateUserCreateChaiAssert = (req, res, next) => {
             /^[a-zA-Z\s]+$/.test(req.body.lastName),
             'lastName must be a string'
         )
-
-        assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
-        assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
-        assert(
-            typeof req.body.emailAdress === 'string',
-            'emailAdress must be a string'
-        )
-        assert(
-            /@/.test(req.body.emailAdress),
-            'emailAdress must look like example@email.com'
-        )
-
         logger.trace('User successfully validated')
         next()
     } catch (ex) {
@@ -100,10 +91,49 @@ const validateMailExists = (req, res, next) => {
         next()
     }
 }
+const validatePhoneNumber = (req, res, next) => {
+    const phoneRegex = /^06[-\s]?\d{8}$/;
+    if (!phoneRegex.test(req.body.phoneNumber)) {
+        next({
+            status: 400,
+            message: 'Phone number must contain exactly 10 digits and start with 06',
+            data: {}
+        });
+    } else {
+        next();
+    }
+}
+const validatePassword = (req, res, next) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(req.body.password)) {
+        next({
+            status: 400,
+            message: 'Password must contain at least 8 characters, 1 uppercase letter, and 1 digit',
+            data: {}
+        });
+    } else {
+        next();
+    }
+}
+const validateEmailFormat = (req, res, next) => {
+    const emailRegex = /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i;
+    if (!emailRegex.test(req.body.emailAdress)) {
+        next({
+            status: 400,
+            message: 'Invalid email format',
+            data: {}
+        });
+    } else {
+        next();
+    }
+}
 
 // Userroutes
 router.post(
     '/api/user',
+    validateEmailFormat,
+    validatePhoneNumber,
+    validatePassword,
     validateUserCreateChaiAssert,
     validateMailExists,
     userController.create

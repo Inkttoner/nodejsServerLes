@@ -21,7 +21,7 @@ const userService = {
                     user.password,
                     user.street,
                     user.city,
-                    user.isActive,
+                    true,
                     user.phoneNumber
                 ],
                 function (error, results, fields) {
@@ -234,7 +234,7 @@ const userService = {
             }
 
             connection.query(
-                'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user` WHERE id = ?',
+                'SELECT id, firstName, lastName, emailAdress, phoneNumber, isActive, city, street  FROM `user` WHERE id = ?',
                 [userId],
                 function (error, results, fields) {
                     connection.release()

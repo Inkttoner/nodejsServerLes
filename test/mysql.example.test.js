@@ -26,7 +26,16 @@ const CLEAR_DB = CLEAR_MEAL_TABLE + CLEAR_PARTICIPANTS_TABLE + CLEAR_USERS_TABLE
  */
 const INSERT_USER =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "first", "last", "name@server.nl", "secret", "street", "city");'
+    '(1, "first", "last", "1.name@server.nl", "Secret12", "street", "city");'
+    const INSERT_USER_NO_FIRSTNAME =
+    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+    '(1, "", "last", "2.name@server.nl", "Secret12", "street", "city");'
+    const INSERT_USER_WRONG_EMAIL =
+    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+    '(1, "first", "last", "M.S.server", "Secret12", "street", "city");'
+    const INSERT_USER_WRONG_PASSWORD =
+    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+    '(1, "first", "last", "1.name@server.nl", "secret12", "street", "city");'
 
 /**
  * Query om twee meals toe te voegen. Let op de cookId, die moet matchen
@@ -74,10 +83,127 @@ describe('Example MySql testcase', () => {
                 )
             })
         })
+        it('TC-201-1 verplichte velden ontbreken', (done) => {
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
 
-        it('TC-xyz should return valid user', (done) => {
+                // Use the connection
+                connection.query(
+                    CLEAR_DB + INSERT_USER_NO_FIRSTNAME,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        done()
+                    }
+                )
+            })
             chai.request(server)
-                .get('/api/user')
+                .post('/api/user')
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(400)
+                    res.should.be.an('object')
+                    res.should.have.property('status').equals(400)
+                    res.should.have.property('message').equals('Missing or incorrect firstName field')
+                    res.should.have.property('data').that.is.a('object').that.is.empty
+                    done()
+                })
+            })
+        it('TC-201-2 Niet-valide email adres', (done) => {
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
+
+                // Use the connection
+                connection.query(
+                    CLEAR_DB + INSERT_USER_WRONG_EMAIL,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        done()
+                    }
+                )
+            })
+            chai.request(server)
+                .post('/api/user')
+                .end((err, res) => {
+                    res.should.have.status(400)
+                    res.body.should.be.a('object')
+                    res.body.should.have.property('status').equals(400)
+                    res.body.should.have.property('message').equals('Invalid email format')
+                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    done()
+                })
+        })
+        it('TC-201-3 Niet-valide password', (done) => {
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
+
+                // Use the connection
+                connection.query(
+                    CLEAR_DB + INSERT_USER_WRONG_PASSWORD,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        done()
+                    }
+                )
+            })
+            chai.request(server)
+                .post('/api/user')
+                .end((err, res) => {
+                    res.should.have.status(400)
+                    res.body.should.be.a('object')
+                    res.body.should.have.property('status').equals(400)
+                    res.body.should.have.property('message').equals('Password must contain at least 8 characters, 1 uppercase letter, and 1 digit')
+                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    done()
+                })
+        })
+        it('TC-201-4 gebruiker bestaat al', (done) => {
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
+
+                // Use the connection
+                connection.query(
+                     INSERT_USER,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        done()
+                    }
+                )
+            })
+            chai.request(server)
+                .post('/api/user')
+                .end((err, res) => {
+                    res.should.have.status(403)
+                    res.body.should.be.a('object')
+                    res.body.should.have.property('status').equals(403)
+                    res.body.should.have.property('message').equals('Email already exists in the database')
+                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    done()
+                })
+        })
+
+        it('TC-201-5 gebruiker succesvol geregistreed', (done) => {
+            chai.request(server)
+                .post('/api/user')
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(200)
@@ -96,9 +222,9 @@ describe('Example MySql testcase', () => {
                         'firstName',
                         'lastName',
                         'emailAdress',
-                        'password'
-                        // 'street',
-                        // 'city'
+                        'password',
+                        'street',
+                        'city'
                     )
                     data[0].id.should.be.a('number').that.equals(1)
                     data[0].firstName.should.be.a('string').that.equals('first')
@@ -110,5 +236,6 @@ describe('Example MySql testcase', () => {
                     done()
                 })
         })
+       
     })
 })
