@@ -41,9 +41,6 @@ const validateUserCreateChaiShould = (req, res, next) => {
 }
 
 const validateUserCreateChaiAssert = (req, res, next) => {
-    const emailRegex = /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
-    const phoneNumberRegex = /^06[-\s]?\d{8}$/ 
     try {
         assert(req.body.firstName, 'Missing or incorrect firstName field')
         assert(req.body.firstName.length > 0, 'firstName must not be empty')

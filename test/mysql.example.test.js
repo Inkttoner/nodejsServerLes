@@ -106,10 +106,10 @@ describe('Example MySql testcase', () => {
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(400)
-                    res.should.be.an('object')
-                    res.should.have.property('status').equals(400)
-                    res.should.have.property('message').equals('Missing or incorrect firstName field')
-                    res.should.have.property('data').that.is.a('object').that.is.empty
+                    res.body.should.be.an('object')
+                    res.body.should.have.property('status').equals(400)
+                    res.body.should.have.property('message').equals('Missing or incorrect firstName field')
+                    res.body.should.have.property('data').that.is.a('object').that.is.empty
                     done()
                 })
             })
