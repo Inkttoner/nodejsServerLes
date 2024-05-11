@@ -42,6 +42,7 @@ const validateUserCreateChaiShould = (req, res, next) => {
 
 const validateUserCreateChaiAssert = (req, res, next) => {
     try {
+        //Assert first name
         assert(req.body.firstName, 'Missing or incorrect firstName field')
         assert(req.body.firstName.length > 0, 'firstName must not be empty')
         assert(
@@ -52,7 +53,7 @@ const validateUserCreateChaiAssert = (req, res, next) => {
             /^[a-zA-Z]+$/.test(req.body.firstName),
             'firstName must be a string'
         )
-
+        //Assert last name
         assert(req.body.lastName, 'Missing or incorrect lastName field')
         assert(req.body.lastName.length > 0, 'lastName must not be empty')
         assert(
@@ -63,8 +64,24 @@ const validateUserCreateChaiAssert = (req, res, next) => {
             /^[a-zA-Z\s]+$/.test(req.body.lastName),
             'lastName must be a string'
         )
+        //Assert emailAdress
+        assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
+        assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
+        assert(validateEmailFormat(req.body.emailAdress), 'Invalid email format')
+        //Assert phoneNumber
+        assert(req.body.phoneNumber, 'Missing or incorrect phoneNumber field')
+        assert(req.body.phoneNumber.length > 0, 'phoneNumber must not be empty')
+        assert(validatePhoneNumber(req.body.phoneNumber), 'Invalid phone number')
+        //Assert password
+        assert(req.body.password, 'Missing or incorrect password field')
+        assert(req.body.password.length > 0, 'password must not be empty')
+        assert(validatePassword(req.body.password), 'Invalid password')
+        //Assert email existence
+        assert(!validateMailExists(req.body.emailAdress), 'Email already exists in the database')
+
         logger.trace('User successfully validated')
         next()
+
     } catch (ex) {
         logger.trace('User validation failed:', ex.message)
         next({
@@ -129,10 +146,6 @@ const validateEmailFormat = (req, res, next) => {
 router.post(
     '/api/user',
     validateUserCreateChaiAssert,
-    validateEmailFormat,
-    validatePhoneNumber,
-    validatePassword,
-    validateMailExists,
     userController.create
 )
 router.get('/api/user', validateToken, userController.getAll)

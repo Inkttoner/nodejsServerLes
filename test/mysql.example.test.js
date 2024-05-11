@@ -96,8 +96,6 @@ describe('Example MySql testcase', () => {
 
                         // Handle error after the release.
                         if (error) throw error
-                        // Let op dat je done() pas aanroept als de query callback eindigt!
-                        done()
                     }
                 )
             })
@@ -127,7 +125,7 @@ describe('Example MySql testcase', () => {
                         // Handle error after the release.
                         if (error) throw error
                         // Let op dat je done() pas aanroept als de query callback eindigt!
-                        done()
+                      
                     }
                 )
             })
@@ -156,7 +154,7 @@ describe('Example MySql testcase', () => {
                         // Handle error after the release.
                         if (error) throw error
                         // Let op dat je done() pas aanroept als de query callback eindigt!
-                        done()
+                      
                     }
                 )
             })
