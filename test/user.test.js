@@ -82,12 +82,12 @@ describe('Example MySql testcase', () => {
                 .post('/api/user')
                 .send({
                     // firstName: 'Voornaam', ontbreekt
-                    "lastName": "de Kruijf",
-                    "emailAdress": "c.name@server.nl",
-                    "password": "Geheim12",
-                    "street": "de Lind",
-                    "city": "Oisterwijk",
-                    "phoneNumber": "0658774685"
+                    lastName: "de Kruijf",
+                    emailAdress: "c.name@server.nl",
+                    password: "Geheim12",
+                    street: "de Lind",
+                    city: "Oisterwijk",
+                    phoneNumber: "0658774685"
 
                 })
                 .end((err, res) => {
@@ -104,13 +104,13 @@ describe('Example MySql testcase', () => {
             chai.request(server)
                 .post( '/api/user')
                 .send({
-                    "firstName": "first",
-                    "lastName": "last",
-                    "emailAdress": "c.name.server.nl",
-                    "password": "Geheim12",
-                    "street": "de Lind",
-                    "city": "Oisterwijk",
-                    "phoneNumber": "0658774685"
+                    firstName: "first",
+                    lastName: "de Kruijf",
+                    emailAdress: "c.name.server.nl",
+                    password: "Geheim12",
+                    street: "de Lind",
+                    city: "Oisterwijk",
+                    phoneNumber: "0658774685"
                 })
                 .end((err, res) => {
                     res.should.have.status(400)
@@ -125,13 +125,13 @@ describe('Example MySql testcase', () => {
             chai.request(server)
                 .post('/api/user')
                 .send({
-                    "firstName": "first",
-                    "lastName": "last",
-                    "emailAdress": "c.name@server.nl",
-                    "password": "geheim12",
-                    "street": "de Lind",
-                    "city": "Oisterwijk",
-                    "phoneNumber": "0658774685"
+                    firstName: "first",
+                    lastName: "de Kruijf",
+                    emailAdress: "c.name@server.nl",
+                    password: "geheim12",
+                    street: "de Lind",
+                    city: "Oisterwijk",
+                    phoneNumber: "0658774685"
                 })
                 .end((err, res) => {
                     res.should.have.status(400)
@@ -146,13 +146,13 @@ describe('Example MySql testcase', () => {
             chai.request(server)
                 .post('/api/user')
                 .send({
-                    "firstName": "first",
-                    "lastName": "last",
-                    "emailAdress": "a.name@server.nl",
-                    "password": "Geheim12",
-                    "street": "de Lind",
-                    "city": "Oisterwijk",
-                    "phoneNumber": "0658774685"
+                    firstName: "first",
+                    lastName: "de Kruijf",
+                    emailAdress: "a.name@server.nl",
+                    password: "Geheim12",
+                    street: "de Lind",
+                    city: "Oisterwijk",
+                    phoneNumber: "0658774685"
                 })
                 .end((err, res) => {
                     res.should.have.status(403)
