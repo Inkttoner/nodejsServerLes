@@ -67,15 +67,15 @@ const validateUserCreateChaiAssert = (req, res, next) => {
         //Assert emailAdress
         assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
         assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
-        assert(validateEmailFormat(req.body.emailAdress), 'Invalid email format')
+        assert(req.body.emailAdress.to.match(/^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i), 'Invalid email format')
         //Assert phoneNumber
         assert(req.body.phoneNumber, 'Missing or incorrect phoneNumber field')
         assert(req.body.phoneNumber.length > 0, 'phoneNumber must not be empty')
-        assert(validatePhoneNumber(req.body.phoneNumber), 'Invalid phone number')
+        assert(req.body.phoneNumber.to.match(/^06[-\s]?\d{8}$/), 'Invalid phone number')
         //Assert password
         assert(req.body.password, 'Missing or incorrect password field')
         assert(req.body.password.length > 0, 'password must not be empty')
-        assert(validatePassword(req.body.password), 'Invalid password')
+        assert(req.body.password.to.match(/^(?=.*[A-Z])(?=.*\d).{8,}$/), 'Invalid password')
         //Assert email existence
         assert(!validateMailExists(req.body.emailAdress), 'Email already exists in the database')
 
@@ -103,42 +103,6 @@ const validateMailExists = (req, res, next) => {
         })
     } else {
         next()
-    }
-}
-const validatePhoneNumber = (req, res, next) => {
-    const phoneRegex = /^06[-\s]?\d{8}$/;
-    if (!phoneRegex.test(req.body.phoneNumber)) {
-        next({
-            status: 400,
-            message: 'Phone number must contain exactly 10 digits and start with 06',
-            data: {}
-        });
-    } else {
-        next();
-    }
-}
-const validatePassword = (req, res, next) => {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!passwordRegex.test(req.body.password)) {
-        next({
-            status: 400,
-            message: 'Password must contain at least 8 characters, 1 uppercase letter, and 1 digit',
-            data: {}
-        });
-    } else {
-        next();
-    }
-}
-const validateEmailFormat = (req, res, next) => {
-    const emailRegex = /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i;
-    if (!emailRegex.test(req.body.emailAdress)) {
-        next({
-            status: 400,
-            message: 'Invalid email format',
-            data: {}
-        });
-    } else {
-        next();
     }
 }
 

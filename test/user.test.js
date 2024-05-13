@@ -102,7 +102,7 @@ describe('Example MySql testcase', () => {
                     done()
                 })
         })
-        it('TC-201-1 Niet valide email adres', (done) => {
+        it('TC-201-2 Niet valide email adres', (done) => {
             chai.request(server)
                 .post('/api/user')
                 .send({
