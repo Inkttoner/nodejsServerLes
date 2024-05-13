@@ -67,22 +67,22 @@ const validateUserCreateChaiAssert = (req, res, next) => {
         //Assert emailAdress
         assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
         assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
-        assert(req.body.emailAdress).to.match(
-            /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i,
+        assert(
+            /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i.test(req.body.emailAdress),
             'Invalid email format'
         )
         //Assert phoneNumber
         assert(req.body.phoneNumber, 'Missing or incorrect phoneNumber field')
         assert(req.body.phoneNumber.length > 0, 'phoneNumber must not be empty')
-        assert(req.body.phoneNumber).to.match(
-            /^06[-\s]?\d{8}$/,
+        assert(
+            /^06[-\s]?\d{8}$/.test(req.body.phoneNumber),
             'Invalid phone number'
         )
         //Assert password
         assert(req.body.password, 'Missing or incorrect password field')
         assert(req.body.password.length > 0, 'password must not be empty')
-        assert(req.body.password).to.match(
-            /^(?=.*[A-Z])(?=.*\d).{8,}$/,
+        assert(
+            /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(req.body.password), 
             'Invalid password'
         )
         //Assert email existence
