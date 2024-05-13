@@ -77,7 +77,7 @@ describe('Example MySql testcase', () => {
                 )
             })
         })
-        it.skip('TC-201-1 Verplicht veld ontbreekt', (done) => {
+        it('TC-201-1 Verplicht veld ontbreekt', (done) => {
             chai.request(server)
                 .post('/api/user')
                 .send({
@@ -113,6 +113,7 @@ describe('Example MySql testcase', () => {
                     phoneNumber: "0658774685"
                 })
                 .end((err, res) => {
+                    assert.ifError(err)
                     res.should.have.status(400)
                     res.body.should.be.a('object')
                     res.body.should.have.property('status').equals(400)
