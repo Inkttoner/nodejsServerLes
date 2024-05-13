@@ -67,21 +67,32 @@ const validateUserCreateChaiAssert = (req, res, next) => {
         //Assert emailAdress
         assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
         assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
-        assert(req.body.emailAdress.to.match(/^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i), 'Invalid email format')
+        assert(req.body.emailAdress).to.match(
+            /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i,
+            'Invalid email format'
+        )
         //Assert phoneNumber
         assert(req.body.phoneNumber, 'Missing or incorrect phoneNumber field')
         assert(req.body.phoneNumber.length > 0, 'phoneNumber must not be empty')
-        assert(req.body.phoneNumber.to.match(/^06[-\s]?\d{8}$/), 'Invalid phone number')
+        assert(req.body.phoneNumber).to.match(
+            /^06[-\s]?\d{8}$/,
+            'Invalid phone number'
+        )
         //Assert password
         assert(req.body.password, 'Missing or incorrect password field')
         assert(req.body.password.length > 0, 'password must not be empty')
-        assert(req.body.password.to.match(/^(?=.*[A-Z])(?=.*\d).{8,}$/), 'Invalid password')
+        assert(req.body.password).to.match(
+            /^(?=.*[A-Z])(?=.*\d).{8,}$/,
+            'Invalid password'
+        )
         //Assert email existence
-        assert(!validateMailExists(req.body.emailAdress), 'Email already exists in the database')
+        assert(
+            !validateMailExists(req.body.emailAdress),
+            'Email already exists in the database'
+        )
 
         logger.trace('User successfully validated')
         next()
-
     } catch (ex) {
         logger.trace('User validation failed:', ex.message)
         next({
@@ -107,11 +118,7 @@ const validateMailExists = (req, res, next) => {
 }
 
 // Userroutes
-router.post(
-    '/api/user',
-    validateUserCreateChaiAssert,
-    userController.create
-)
+router.post('/api/user', validateUserCreateChaiAssert, userController.create)
 router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', validateToken, userController.getById)
