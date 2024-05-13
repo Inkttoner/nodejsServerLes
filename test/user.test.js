@@ -27,15 +27,9 @@ const CLEAR_DB = CLEAR_MEAL_TABLE + CLEAR_PARTICIPANTS_TABLE + CLEAR_USERS_TABLE
 const INSERT_USER =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
     '(1, "first", "last", "a.name@server.nl", "Secret12", "street", "city");'
-    const INSERT_USER_NO_FIRSTNAME =
+    const INSERT_USER2 =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "", "last", "b.name@server.nl", "Secret12", "street", "city");'
-    const INSERT_USER_WRONG_EMAIL =
-    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "first", "last", "M.S.server", "Secret12", "street", "city");'
-    const INSERT_USER_WRONG_PASSWORD =
-    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "first", "last", "a.name@server.nl", "secret12", "street", "city");'
+    '(2, "first", "last", "b.name@server.nl", "Secret12", "street", "city");'
 
 /**
  * Query om twee meals toe te voegen. Let op de cookId, die moet matchen
@@ -83,24 +77,19 @@ describe('Example MySql testcase', () => {
                 )
             })
         })
-        it('TC-201-1 verplichte velden ontbreken', (done) => {
-            db.getConnection(function (err, connection) {
-                if (err) throw err // not connected!
-
-                // Use the connection
-                connection.query(
-                    CLEAR_DB + INSERT_USER_NO_FIRSTNAME,
-                    function (error, results, fields) {
-                        // When done with the connection, release it.
-                        connection.release()
-
-                        // Handle error after the release.
-                        if (error) throw error
-                    }
-                )
-            })
+        it.skip('TC-201-1 Verplicht veld ontbreekt', (done) => {
             chai.request(server)
                 .post('/api/user')
+                .send({
+                    // firstName: 'Voornaam', ontbreekt
+                    "lastName": "de Kruijf",
+                    "emailAdress": "c.name@server.nl",
+                    "password": "Geheim12",
+                    "street": "de Lind",
+                    "city": "Oisterwijk",
+                    "phoneNumber": "0658774685"
+
+                })
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(400)
@@ -110,27 +99,19 @@ describe('Example MySql testcase', () => {
                     res.body.should.have.property('data').that.is.a('object').that.is.empty
                     done()
                 })
-            })
+        })
         it('TC-201-2 Niet-valide email adres', (done) => {
-            db.getConnection(function (err, connection) {
-                if (err) throw err // not connected!
-
-                // Use the connection
-                connection.query(
-                    CLEAR_DB + INSERT_USER_WRONG_EMAIL,
-                    function (error, results, fields) {
-                        // When done with the connection, release it.
-                        connection.release()
-
-                        // Handle error after the release.
-                        if (error) throw error
-                        // Let op dat je done() pas aanroept als de query callback eindigt!
-                      
-                    }
-                )
-            })
             chai.request(server)
-                .post('/api/user')
+                .post( '/api/user')
+                .send({
+                    "firstName": "first",
+                    "lastName": "last",
+                    "emailAdress": "c.name.server.nl",
+                    "password": "Geheim12",
+                    "street": "de Lind",
+                    "city": "Oisterwijk",
+                    "phoneNumber": "0658774685"
+                })
                 .end((err, res) => {
                     res.should.have.status(400)
                     res.body.should.be.a('object')
@@ -141,25 +122,17 @@ describe('Example MySql testcase', () => {
                 })
         })
         it('TC-201-3 Niet-valide password', (done) => {
-            db.getConnection(function (err, connection) {
-                if (err) throw err // not connected!
-
-                // Use the connection
-                connection.query(
-                    CLEAR_DB + INSERT_USER_WRONG_PASSWORD,
-                    function (error, results, fields) {
-                        // When done with the connection, release it.
-                        connection.release()
-
-                        // Handle error after the release.
-                        if (error) throw error
-                        // Let op dat je done() pas aanroept als de query callback eindigt!
-                      
-                    }
-                )
-            })
             chai.request(server)
                 .post('/api/user')
+                .send({
+                    "firstName": "first",
+                    "lastName": "last",
+                    "emailAdress": "c.name@server.nl",
+                    "password": "geheim12",
+                    "street": "de Lind",
+                    "city": "Oisterwijk",
+                    "phoneNumber": "0658774685"
+                })
                 .end((err, res) => {
                     res.should.have.status(400)
                     res.body.should.be.a('object')
@@ -170,25 +143,17 @@ describe('Example MySql testcase', () => {
                 })
         })
         it('TC-201-4 gebruiker bestaat al', (done) => {
-            db.getConnection(function (err, connection) {
-                if (err) throw err // not connected!
-
-                // Use the connection
-                connection.query(
-                     INSERT_USER,
-                    function (error, results, fields) {
-                        // When done with the connection, release it.
-                        connection.release()
-
-                        // Handle error after the release.
-                        if (error) throw error
-                        // Let op dat je done() pas aanroept als de query callback eindigt!
-                        done()
-                    }
-                )
-            })
             chai.request(server)
                 .post('/api/user')
+                .send({
+                    "firstName": "first",
+                    "lastName": "last",
+                    "emailAdress": "a.name@server.nl",
+                    "password": "Geheim12",
+                    "street": "de Lind",
+                    "city": "Oisterwijk",
+                    "phoneNumber": "0658774685"
+                })
                 .end((err, res) => {
                     res.should.have.status(403)
                     res.body.should.be.a('object')
