@@ -27,7 +27,7 @@ const CLEAR_DB = CLEAR_MEAL_TABLE + CLEAR_PARTICIPANTS_TABLE + CLEAR_USERS_TABLE
 const INSERT_USER =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
     '(1, "first", "last", "a.name@server.nl", "Secret12", "street", "city");'
-    const INSERT_USER2 =
+const INSERT_USER2 =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
     '(2, "first", "last", "b.name@server.nl", "Secret12", "street", "city");'
 
@@ -82,42 +82,48 @@ describe('Example MySql testcase', () => {
                 .post('/api/user')
                 .send({
                     // firstName: 'Voornaam', ontbreekt
-                    lastName: "de Kruijf",
-                    emailAdress: "c.name@server.nl",
-                    password: "Geheim12",
-                    street: "de Lind",
-                    city: "Oisterwijk",
-                    phoneNumber: "0658774685"
-
+                    lastName: 'de Kruijf',
+                    emailAdress: 'c.name@server.nl',
+                    password: 'Geheim12',
+                    street: 'de Lind',
+                    city: 'Oisterwijk',
+                    phoneNumber: '0658774685'
                 })
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(400)
                     res.body.should.be.an('object')
                     res.body.should.have.property('status').equals(400)
-                    res.body.should.have.property('message').equals('Missing or incorrect firstName field')
-                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    res.body.should.have
+                        .property('message')
+                        .equals('Missing or incorrect firstName field')
+                    res.body.should.have.property('data').that.is.a('object')
+                        .that.is.empty
                     done()
                 })
         })
-        it('TC-201-2 Niet-valide email adres', (done) => {
+        it('TC-201-1 Niet valide email adres', (done) => {
             chai.request(server)
                 .post('/api/user')
                 .send({
-                    firstName: "first",
-                    lastName: "de Kruijf",
-                    emailAdress: "c.nameserver.nl",
-                    password: "Geheim12",
-                    street: "de Lind",
-                    city: "Oisterwijk",
-                    phoneNumber: "0658774685"
+                    firstName: 'first',
+                    lastName: 'de Kruijf',
+                    emailAdress: 'c.name.server.nl',
+                    password: 'Geheim12',
+                    street: 'de Lind',
+                    city: 'Oisterwijk',
+                    phoneNumber: '0658774685'
                 })
                 .end((err, res) => {
+                    assert.ifError(err)
                     res.should.have.status(400)
-                    res.body.should.be.a('object')
+                    res.body.should.be.an('object')
                     res.body.should.have.property('status').equals(400)
-                    res.body.should.have.property('message').equals('Invalid email format')
-                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    res.body.should.have
+                        .property('message')
+                        .equals('Invalid email format')
+                    res.body.should.have.property('data').that.is.a('object')
+                        .that.is.empty
                     done()
                 })
         })
@@ -125,20 +131,25 @@ describe('Example MySql testcase', () => {
             chai.request(server)
                 .post('/api/user')
                 .send({
-                    firstName: "first",
-                    lastName: "de Kruijf",
-                    emailAdress: "c.name@server.nl",
-                    password: "geheim12",
-                    street: "de Lind",
-                    city: "Oisterwijk",
-                    phoneNumber: "0658774685"
+                    firstName: 'first',
+                    lastName: 'de Kruijf',
+                    emailAdress: 'c.name@server.nl',
+                    password: 'geheim12',
+                    street: 'de Lind',
+                    city: 'Oisterwijk',
+                    phoneNumber: '0658774685'
                 })
                 .end((err, res) => {
                     res.should.have.status(400)
                     res.body.should.be.a('object')
                     res.body.should.have.property('status').equals(400)
-                    res.body.should.have.property('message').equals('Password must contain at least 8 characters, 1 uppercase letter, and 1 digit')
-                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    res.body.should.have
+                        .property('message')
+                        .equals(
+                            'Password must contain at least 8 characters, 1 uppercase letter, and 1 digit'
+                        )
+                    res.body.should.have.property('data').that.is.a('object')
+                        .that.is.empty
                     done()
                 })
         })
@@ -146,20 +157,23 @@ describe('Example MySql testcase', () => {
             chai.request(server)
                 .post('/api/user')
                 .send({
-                    firstName: "first",
-                    lastName: "de Kruijf",
-                    emailAdress: "a.name@server.nl",
-                    password: "Geheim12",
-                    street: "de Lind",
-                    city: "Oisterwijk",
-                    phoneNumber: "0658774685"
+                    firstName: 'first',
+                    lastName: 'de Kruijf',
+                    emailAdress: 'a.name@server.nl',
+                    password: 'Geheim12',
+                    street: 'de Lind',
+                    city: 'Oisterwijk',
+                    phoneNumber: '0658774685'
                 })
                 .end((err, res) => {
                     res.should.have.status(403)
                     res.body.should.be.a('object')
                     res.body.should.have.property('status').equals(403)
-                    res.body.should.have.property('message').equals('Email already exists in the database')
-                    res.body.should.have.property('data').that.is.a('object').that.is.empty
+                    res.body.should.have
+                        .property('message')
+                        .equals('Email already exists in the database')
+                    res.body.should.have.property('data').that.is.a('object')
+                        .that.is.empty
                     done()
                 })
         })
@@ -180,15 +194,17 @@ describe('Example MySql testcase', () => {
                     const data = res.body.data
 
                     data.should.be.an('array').that.has.lengthOf(1)
-                    data[0].should.be.an('object').that.has.all.keys(
-                        'id',
-                        'firstName',
-                        'lastName',
-                        'emailAdress',
-                        'password',
-                        'street',
-                        'city'
-                    )
+                    data[0].should.be
+                        .an('object')
+                        .that.has.all.keys(
+                            'id',
+                            'firstName',
+                            'lastName',
+                            'emailAdress',
+                            'password',
+                            'street',
+                            'city'
+                        )
                     data[0].id.should.be.a('number').that.equals(1)
                     data[0].firstName.should.be.a('string').that.equals('first')
                     data[0].lastName.should.be.a('string').that.equals('last')
@@ -199,6 +215,5 @@ describe('Example MySql testcase', () => {
                     done()
                 })
         })
-       
     })
 })
