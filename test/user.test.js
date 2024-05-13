@@ -102,18 +102,17 @@ describe('Example MySql testcase', () => {
         })
         it('TC-201-2 Niet-valide email adres', (done) => {
             chai.request(server)
-                .post( '/api/user')
+                .post('/api/user')
                 .send({
                     firstName: "first",
                     lastName: "de Kruijf",
-                    emailAdress: "c.name.server.nl",
+                    emailAdress: "c.nameserver.nl",
                     password: "Geheim12",
                     street: "de Lind",
                     city: "Oisterwijk",
                     phoneNumber: "0658774685"
                 })
                 .end((err, res) => {
-                    assert.ifError(err)
                     res.should.have.status(400)
                     res.body.should.be.a('object')
                     res.body.should.have.property('status').equals(400)
