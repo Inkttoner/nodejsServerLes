@@ -5,6 +5,7 @@ process.env.JWT_SECRET =  process.env.JWT_SECRET || 'DitIsEenGeheim'
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const chaiServer = require('chai-http')
 const server = require('../index')
 const assert = require('assert')
 const logger = require('../src/util/logger')
