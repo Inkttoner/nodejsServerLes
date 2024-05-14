@@ -44,10 +44,21 @@ const userService = {
                         }
                     } else {
                         logger.debug(results)
+                        const newUser = {
+                        id: results.insertId,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        emailAdress: user.emailAdress,
+                        password: user.password,
+                        street: user.street,
+                        city: user.city,
+                        isActive: true,
+                        phoneNumber: user.phoneNumber
+                        }
                         callback(null, {
                             status: 201,
                             message: `User created with id ${results.insertId}.`,
-                            data: results
+                            data: [newUser]
                         })
                     }
                 }
