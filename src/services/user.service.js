@@ -77,15 +77,20 @@ const userService = {
             let query = 'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user`';
             const validColumns = ['id', 'firstName', 'lastName', 'emailAdress', 'phoneNumber', 'isActive', 'city', 'street'];
             let params = [];
+            let invalidFields = [];
     
             if (filters) {
                 let isFirst = true;
                 for (let key in filters) {
-                    if (filters.hasOwnProperty(key)&& validColumns.includes(key)) {
-                        query += isFirst ? ' WHERE' : ' AND';
-                        query += ` ${key} = ?`;
-                        params.push(filters[key]);
-                        isFirst = false;
+                    if (filters.hasOwnProperty(key)) {
+                        if (validColumns.includes(key)) {
+                            query += isFirst ? ' WHERE' : ' AND';
+                            query += ` ${key} = ?`;
+                            params.push(filters[key]);
+                            isFirst = false;
+                        } else {
+                            invalidFields.push(key);
+                        }
                     }
                 }
             }
@@ -98,9 +103,13 @@ const userService = {
                     callback(error, null)
                 } else {
                     logger.debug(results)
+                    let message = `Found ${results.length} users.`;
+                    if (invalidFields.length > 0) {
+                        message += ` Invalid query fields: ${invalidFields.join(', ')}.`;
+                    }
                     callback(null, {
                         status: 200,
-                        message: `Found ${results.length} users.`,
+                        message: message,
                         data: results
                     })
                 }

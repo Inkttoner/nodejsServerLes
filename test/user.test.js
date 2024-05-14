@@ -290,7 +290,7 @@ describe('Example MySql testcase', () => {
             chai.request(server)
                 .get(
                     endpointToTest +
-                        '?nonExistentField=first&nonExistentField=last'
+                        '?nonExistentField=first&nonExistentField2=last'
                 )
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
@@ -446,6 +446,7 @@ describe('Example MySql testcase', () => {
                     })
             })
         })
+    })
         describe('UC-204 opvragen van usergegevens bij ID', () => {
             beforeEach((done) => {
                 logger.debug('beforeEach called')
@@ -566,4 +567,3 @@ describe('Example MySql testcase', () => {
             })
         })
     })
-})
