@@ -524,6 +524,7 @@ describe('Example MySql testcase', () => {
                         res.body.message.should.contain(
                             'Found 1 user.'
                         )
+                        const data = res.body.data
                         data[0].should.be
                             .an('object')
                             .that.has.all.keys(
