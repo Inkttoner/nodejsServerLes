@@ -265,7 +265,7 @@ describe('Example MySql testcase', () => {
             })
         })
         it('TC-202-1 Toon alle gebruikers', (done) => {
-            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
             chaiServer
                 .request(server)
                 .get(endpointToTest)
@@ -286,7 +286,7 @@ describe('Example MySql testcase', () => {
         })
 
         it('TC-202-2 Toon gebruikers met zoekterm op niet-bestaande velden.', (done) => {
-            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
             chaiServer
                 .request(server)
                 .get(
@@ -310,7 +310,7 @@ describe('Example MySql testcase', () => {
         })
 
         it('TC-202-3 Toon gebruikers met gebruik van de zoekterm op het veld `isActive`=fals', (done) => {
-            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
             chaiServer
                 .request(server)
                 .get(endpointToTest + '?isActive=false')
@@ -329,7 +329,7 @@ describe('Example MySql testcase', () => {
         })
 
         it('TC-202-4 Toon gebruikers met gebruik van de zoekterm op het veld `isActive`=true', (done) => {
-            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
             chaiServer
                 .request(server)
                 .get(endpointToTest + '?isActive=true')
@@ -350,7 +350,7 @@ describe('Example MySql testcase', () => {
         })
 
         it('TC-202-5 Toon gebruikers met zoektermen op bestaande velden', (done) => {
-            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
             chaiServer
                 .request(server)
                 .get(endpointToTest + '?firstName=first&lastName=last')
@@ -393,7 +393,7 @@ describe('Example MySql testcase', () => {
             })
 
             it('TC-203-1 ongeldig token', (done) => {
-                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chaiServer
                     .request(server)
                     .get(endpointToTest + '/1')
@@ -411,7 +411,7 @@ describe('Example MySql testcase', () => {
                     })
             })
             it('TC-203-2 gebruiker is ingelogd met geldig token', (done) => {
-                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chaiServer
                     .request(server)
                     .get(endpointToTest + '/1')
@@ -476,7 +476,7 @@ describe('Example MySql testcase', () => {
             })
 
             it('TC-204-1 ongeldig token', (done) => {
-                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chaiServer
                     .request(server)
                     .get(endpointToTest + '/1')
@@ -495,7 +495,7 @@ describe('Example MySql testcase', () => {
             })
 
             it('TC-204-2 user id bestaat niet', (done) => {
-                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chaiServer
                     .request(server)
                     .get(endpointToTest + '/3')
@@ -516,7 +516,7 @@ describe('Example MySql testcase', () => {
             })
 
             it('TC-204-3 user id bestaat', (done) => {
-                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chaiServer
                     .request(server)
                     .get(endpointToTest + '/2')
