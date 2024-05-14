@@ -1,6 +1,6 @@
+require('dotenv').config()
 process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
 process.env.LOGLEVEL = 'trace'
-require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -205,7 +205,6 @@ describe('Example MySql testcase', () => {
                     res.body.message.should.be.a('string')
                     const data = res.body.data
 
-                
                     data.should.be.an('array').that.has.lengthOf(1)
                     data[0].should.be
                         .an('object')
@@ -222,14 +221,20 @@ describe('Example MySql testcase', () => {
                         )
                     data[0].id.should.be.a('number').that.equals(42)
                     data[0].firstName.should.be.a('string').that.equals('first')
-                    data[0].lastName.should.be.a('string').that.equals('de Kruijf')
+                    data[0].lastName.should.be
+                        .a('string')
+                        .that.equals('de Kruijf')
                     data[0].emailAdress.should.be
                         .a('string')
                         .that.equals('c.dekruijf@server.nl')
-                    data[0].password.should.be.a('string').that.equals('Geheim12')
+                    data[0].password.should.be
+                        .a('string')
+                        .that.equals('Geheim12')
                     data[0].street.should.be.a('string').that.equals('de Lind')
                     data[0].city.should.be.a('string').that.equals('Oisterwijk')
-                    data[0].phoneNumber.should.be.a('string').that.equals('0658774685')
+                    data[0].phoneNumber.should.be
+                        .a('string')
+                        .that.equals('0658774685')
                     data[0].isActive.should.be.a('boolean').that.equals(true)
                     done()
                 })
@@ -260,233 +265,297 @@ describe('Example MySql testcase', () => {
             })
         })
         it('TC-202-1 Toon alle gebruikers', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
-            chaiServer.request(server)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            chaiServer
+                .request(server)
                 .get(endpointToTest)
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(200)
-                    res.body.should.be.an.an('object')
+                    res.body.should.be.an
+                        .an('object')
                         .that.has.all.keys('status', 'message', 'data')
                     res.body.status.should.be.a('number')
-                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2);
+                    res.body.data.should.be
+                        .an('array')
+                        .that.is.not.empty.and.is.lengthOf.above(2)
                     res.body.message.should.contain('Found 2 users')
                     done()
-                });
-        });
+                })
+        })
 
         it('TC-202-2 Toon gebruikers met zoekterm op niet-bestaande velden.', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
-            chaiServer.request(server)
-                .get(endpointToTest + '?nonExistentField=first&nonExistentField=last')
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            chaiServer
+                .request(server)
+                .get(
+                    endpointToTest +
+                        '?nonExistentField=first&nonExistentField=last'
+                )
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(200)
-                    res.body.should.be.an.an('object')
+                    res.body.should.be.an
+                        .an('object')
                         .that.has.all.keys('status', 'message', 'data')
                     res.body.status.should.be.a('number')
-                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2)
+                    res.body.data.should.be
+                        .an('array')
+                        .that.is.not.empty.and.is.lengthOf.above(2)
                     res.body.message.should.contain('Invalid query fields')
                     done()
                 })
         })
 
         it('TC-202-3 Toon gebruikers met gebruik van de zoekterm op het veld `isActive`=fals', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
-            chaiServer.request(server)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            chaiServer
+                .request(server)
                 .get(endpointToTest + '?isActive=false')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(200);
-                    res.body.should.be.an.an('object')
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an
+                        .an('object')
                         .that.has.all.keys('status', 'message', 'data')
                     res.body.status.should.be.a('number')
-                    res.body.data.should.be.an('array').that.is.empty;
+                    res.body.data.should.be.an('array').that.is.empty
                     res.body.message.should.contain('Found 0 users')
                     done()
                 })
         })
 
         it('TC-202-4 Toon gebruikers met gebruik van de zoekterm op het veld `isActive`=true', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
-            chaiServer.request(server)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            chaiServer
+                .request(server)
                 .get(endpointToTest + '?isActive=true')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(200);
-                    res.body.should.be.an.an('object')
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an
+                        .an('object')
                         .that.has.all.keys('status', 'message', 'data')
                     res.body.status.should.be.a('number')
-                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2);
+                    res.body.data.should.be
+                        .an('array')
+                        .that.is.not.empty.and.is.lengthOf.above(2)
                     res.body.message.should.contain('Found 2 users')
-                    done();
-                });
-        });
+                    done()
+                })
+        })
 
         it('TC-202-5 Toon gebruikers met zoektermen op bestaande velden', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
-            chaiServer.request(server)
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+            chaiServer
+                .request(server)
                 .get(endpointToTest + '?firstName=first&lastName=last')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
-                    assert.ifError(err);
+                    assert.ifError(err)
                     res.should.have.status(200)
-                    res.body.should.be.an.an('object')
+                    res.body.should.be.an
+                        .an('object')
                         .that.has.all.keys('status', 'message', 'data')
                     res.body.status.should.be.a('number')
-                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2);
+                    res.body.data.should.be
+                        .an('array')
+                        .that.is.not.empty.and.is.lengthOf.above(2)
                     res.body.message.should.contain('Found 2 users')
                     done()
                 })
         })
     })
-    describe ('UC-203 opvragen van gebruikersprofiel', () => {
-    beforeEach((done) => {
-        logger.debug('beforeEach called');
-        db.getConnection(function (err, connection) {
-            if (err) throw err; // not connected!
-
-            // Use the connection
-            connection.query(
-                CLEAR_DB + INSERT_USER + INSERT_USER2,
-                function (error, results, fields) {
-                    // When done with the connection, release it.
-                    connection.release();
-
-                    // Handle error after the release.
-                    if (error) throw error;
-                    // Let op dat je done() pas aanroept als de query callback eindigt!
-                    logger.debug('beforeEach done');
-                    done();
-                }
-            );
-        });
-
-        it('TC-203-1 ongeldig token', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
-            chaiServer.request(server)
-                .get(endpointToTest + "/1")
-                .set('Authorization', 'Bearer ' + "wrongToken")
-                .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(401);
-                    res.body.should.be.an.an('object')
-                        .that.has.all.keys('status', 'message', 'data');
-                    res.body.status.should.be.a('number');
-                    res.body.data.should.be.an('object').that.is.empty;
-                    res.body.message.should.contain('Not authorized!');
-                    done();
-                });
-        });
-        it('TC-203-2 gebruiker is ingelogd met geldig token', (done) => {	
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
-            chaiServer.request(server)
-                .get(endpointToTest + "/1")
-                .set('Authorization', 'Bearer ' + token)
-                .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(200);
-                    res.body.should.be.an.an('object')
-                        .that.has.all.keys('status', 'message', 'data');
-                    res.body.status.should.be.a('number');
-                    res.body.data.should.be.an('object').that.is.not.empty;
-                    res.body.message.should.contain('Found user with id: 1.');
-                    res.body.data.firstName.should.be.a('string').that.equals('first');
-                    res.body.data.lastName.should.be.a('string').that.equals('last');
-                    res.body.data.emailAdress.should.be.a('string').that.equals('a.name@server.nl');
-                    res.body.data.password.should.be.a('string').that.equals('Secret12');
-                    res.body.data.street.should.be.a('string').that.equals('street');
-                    res.body.data.city.should.be.a('string').that.equals('city');
-                    res.body.data.phoneNumber.should.be.a('string').that.equals('0658449587');
-                    done();
-                });
-        });
-    })
-    describe('UC-204 opvragen van usergegevens bij ID', () => {
+    describe('UC-203 opvragen van gebruikersprofiel', () => {
         beforeEach((done) => {
-            logger.debug('beforeEach called');
+            logger.debug('beforeEach called')
             db.getConnection(function (err, connection) {
-                if (err) throw err; // not connected!
+                if (err) throw err // not connected!
 
                 // Use the connection
                 connection.query(
                     CLEAR_DB + INSERT_USER + INSERT_USER2,
                     function (error, results, fields) {
                         // When done with the connection, release it.
-                        connection.release();
+                        connection.release()
 
                         // Handle error after the release.
-                        if (error) throw error;
+                        if (error) throw error
                         // Let op dat je done() pas aanroept als de query callback eindigt!
-                        logger.debug('beforeEach done');
-                        done();
+                        logger.debug('beforeEach done')
+                        done()
                     }
-                );
-            });
-        });
+                )
+            })
 
-        it('TC-204-1 ongeldig token', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
-            chaiServer.request(server)
-                .get(endpointToTest + "/1")
-                .set('Authorization', 'Bearer ' + "wrongToken")
-                .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(401);
-                    res.body.should.be.an.an('object')
-                        .that.has.all.keys('status', 'message', 'data');
-                    res.body.status.should.be.a('number');
-                    res.body.data.should.be.an('object').that.is.empty;
-                    res.body.message.should.contain('Not authorized!');
-                    done();
-                });
-        });
+            it('TC-203-1 ongeldig token', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                chaiServer
+                    .request(server)
+                    .get(endpointToTest + '/1')
+                    .set('Authorization', 'Bearer ' + 'wrongToken')
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(401)
+                        res.body.should.be.an
+                            .an('object')
+                            .that.has.all.keys('status', 'message', 'data')
+                        res.body.status.should.be.a('number')
+                        res.body.data.should.be.an('object').that.is.empty
+                        res.body.message.should.contain('Not authorized!')
+                        done()
+                    })
+            })
+            it('TC-203-2 gebruiker is ingelogd met geldig token', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                chaiServer
+                    .request(server)
+                    .get(endpointToTest + '/1')
+                    .set('Authorization', 'Bearer ' + token)
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(200)
+                        res.body.should.be.an
+                            .an('object')
+                            .that.has.all.keys('status', 'message', 'data')
+                        res.body.status.should.be.a('number')
+                        res.body.data.should.be.an('object').that.is.not.empty
+                        res.body.message.should.contain(
+                            'Found user with id: 1.'
+                        )
+                        res.body.data.firstName.should.be
+                            .a('string')
+                            .that.equals('first')
+                        res.body.data.lastName.should.be
+                            .a('string')
+                            .that.equals('last')
+                        res.body.data.emailAdress.should.be
+                            .a('string')
+                            .that.equals('a.name@server.nl')
+                        res.body.data.password.should.be
+                            .a('string')
+                            .that.equals('Secret12')
+                        res.body.data.street.should.be
+                            .a('string')
+                            .that.equals('street')
+                        res.body.data.city.should.be
+                            .a('string')
+                            .that.equals('city')
+                        res.body.data.phoneNumber.should.be
+                            .a('string')
+                            .that.equals('0658449587')
+                        done()
+                    })
+            })
+        })
+        describe('UC-204 opvragen van usergegevens bij ID', () => {
+            beforeEach((done) => {
+                logger.debug('beforeEach called')
+                db.getConnection(function (err, connection) {
+                    if (err) throw err // not connected!
 
-        it('TC-204-2 user id bestaat niet', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
-            chaiServer.request(server)
-                .get(endpointToTest + "/3")
-                .set('Authorization', 'Bearer ' + token)
-                .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(404);
-                    res.body.should.be.an.an('object')
-                        .that.has.all.keys('status', 'message', 'data');
-                    res.body.status.should.be.a('number');
-                    res.body.data.should.be.an('object').that.is.empty;
-                    res.body.message.should.contain('User with id: 3 not found!');
-                    done();
-                });
-        });
+                    // Use the connection
+                    connection.query(
+                        CLEAR_DB + INSERT_USER + INSERT_USER2,
+                        function (error, results, fields) {
+                            // When done with the connection, release it.
+                            connection.release()
 
-        it('TC-204-3 user id bestaat', (done) => {
-            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
-            chaiServer.request(server)
-                .get(endpointToTest + "/2")
-                .set('Authorization', 'Bearer ' + token)
-                .end((err, res) => {
-                    assert.ifError(err);
-                    res.should.have.status(200);
-                    res.body.should.be.an.an('object')
-                        .that.has.all.keys('status', 'message', 'data');
-                    res.body.status.should.be.a('number');
-                    res.body.data.should.be.an('object').that.is.not.empty;
-                    res.body.message.should.contain('Found user with id: 2.');
-                    res.body.data.firstName.should.be.a('string').that.equals('first');
-                    res.body.data.lastName.should.be.a('string').that.equals('last');
-                    res.body.data.emailAdress.should.be.a('string').that.equals('b.name@server.nl');
-                    res.body.data.password.should.be.a('string').that.equals('Secret12');
-                    res.body.data.street.should.be.a('string').that.equals('street');
-                    res.body.data.city.should.be.a('string').that.equals('city');
-                    res.body.data.phoneNumber.should.be.a('string').that.equals('0658449587');
-                    done();
-                });
-        });
-    });
+                            // Handle error after the release.
+                            if (error) throw error
+                            // Let op dat je done() pas aanroept als de query callback eindigt!
+                            logger.debug('beforeEach done')
+                            done()
+                        }
+                    )
+                })
+            })
+
+            it('TC-204-1 ongeldig token', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                chaiServer
+                    .request(server)
+                    .get(endpointToTest + '/1')
+                    .set('Authorization', 'Bearer ' + 'wrongToken')
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(401)
+                        res.body.should.be.an
+                            .an('object')
+                            .that.has.all.keys('status', 'message', 'data')
+                        res.body.status.should.be.a('number')
+                        res.body.data.should.be.an('object').that.is.empty
+                        res.body.message.should.contain('Not authorized!')
+                        done()
+                    })
+            })
+
+            it('TC-204-2 user id bestaat niet', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                chaiServer
+                    .request(server)
+                    .get(endpointToTest + '/3')
+                    .set('Authorization', 'Bearer ' + token)
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(404)
+                        res.body.should.be.an
+                            .an('object')
+                            .that.has.all.keys('status', 'message', 'data')
+                        res.body.status.should.be.a('number')
+                        res.body.data.should.be.an('object').that.is.empty
+                        res.body.message.should.contain(
+                            'User with id: 3 not found!'
+                        )
+                        done()
+                    })
+            })
+
+            it('TC-204-3 user id bestaat', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_KEY)
+                chaiServer
+                    .request(server)
+                    .get(endpointToTest + '/2')
+                    .set('Authorization', 'Bearer ' + token)
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(200)
+                        res.body.should.be.an
+                            .an('object')
+                            .that.has.all.keys('status', 'message', 'data')
+                        res.body.status.should.be.a('number')
+                        res.body.data.should.be.an('object').that.is.not.empty
+                        res.body.message.should.contain(
+                            'Found user with id: 2.'
+                        )
+                        res.body.data.firstName.should.be
+                            .a('string')
+                            .that.equals('first')
+                        res.body.data.lastName.should.be
+                            .a('string')
+                            .that.equals('last')
+                        res.body.data.emailAdress.should.be
+                            .a('string')
+                            .that.equals('b.name@server.nl')
+                        res.body.data.password.should.be
+                            .a('string')
+                            .that.equals('Secret12')
+                        res.body.data.street.should.be
+                            .a('string')
+                            .that.equals('street')
+                        res.body.data.city.should.be
+                            .a('string')
+                            .that.equals('city')
+                        res.body.data.phoneNumber.should.be
+                            .a('string')
+                            .that.equals('0658449587')
+                        done()
+                    })
+            })
+        })
     })
 })
-
