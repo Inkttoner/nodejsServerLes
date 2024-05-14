@@ -491,7 +491,7 @@ describe('Example MySql testcase', () => {
             it('TC-204-2 user id bestaat niet', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chai.request(server)
-                    .get(endpointToTest + '/3')
+                    .get(endpointToTest + '/1000')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         assert.ifError(err)
@@ -522,7 +522,7 @@ describe('Example MySql testcase', () => {
                         res.body.status.should.be.a('number')
                         res.body.data.should.be.an('array').that.has.lengthOf(1)
                         res.body.message.should.contain(
-                            'Found user with id: 2.'
+                            'Found 1 user.'
                         )
                         data[0].should.be
                             .an('object')
