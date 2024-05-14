@@ -1,6 +1,7 @@
 require('dotenv').config()
 process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
 process.env.LOGLEVEL = 'trace'
+process.env.JWT_SECRET =  process.env.JWT_SECRET || 'DitIsEenGeheim'
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
