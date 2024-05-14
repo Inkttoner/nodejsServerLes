@@ -228,7 +228,7 @@ describe('Example MySql testcase', () => {
                     data[0].street.should.be.a('string').that.equals('de Lind')
                     data[0].city.should.be.a('string').that.equals('Oisterwijk')
                     data[0].phoneNumber.should.be.a('string').that.equals('0658774685')
-                    data[0].isActive.should.be.a('string').that.equals('true')
+                    data[0].isActive.should.be.a('boolean').that.equals(true)
                     done()
                 })
         })
