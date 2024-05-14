@@ -502,7 +502,7 @@ describe('Example MySql testcase', () => {
                         res.body.status.should.be.a('number')
                         res.body.data.should.be.an('object').that.is.empty
                         res.body.message.should.contain(
-                            'User with id: 1000 not found!'
+                            'No user found with id 1000.'
                         )
                         done()
                     })
@@ -532,7 +532,6 @@ describe('Example MySql testcase', () => {
                                 'firstName',
                                 'lastName',
                                 'emailAdress',
-                                'password',
                                 'street',
                                 'city',
                                 'phoneNumber',
@@ -548,9 +547,6 @@ describe('Example MySql testcase', () => {
                         data[0].emailAdress.should.be
                             .a('string')
                             .that.equals('b.name@server.nl')
-                        data[0].password.should.be
-                            .a('string')
-                            .that.equals('Secret12')
                         data[0].street.should.be
                             .a('string')
                             .that.equals('street')
