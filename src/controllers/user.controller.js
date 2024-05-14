@@ -113,7 +113,13 @@ let userController = {
         const loggedInUser = req.userId
     
         logger.info('delete user', userId, loggedInUser)
-    
+        if (!user) {
+            return res.status(404).json({
+                status: 404,
+                message: 'User not found',
+                data: {}
+            })
+        }
         // Check if the requested userId matches the logged-in userId
         if (userId != loggedInUser) {
             return res.status(401).json({

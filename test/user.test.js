@@ -80,7 +80,7 @@ describe('User testcases', () => {
         })
         it('TC-101-1 verplicht veld ontbreekt', (done) => {
             chai.request(server)
-                .post('/api/user/login')
+                .post('/api/auth/login')
                 .send({
                     // emailAdress: '', ontbreekt
                     password: 'Secret12'
@@ -99,14 +99,14 @@ describe('User testcases', () => {
             })
             it('TC-101-2 Niet-valide wachtwoord', (done) => {
                 chai.request(server)
-                    .post('/api/user/login')
+                    .post('/api/auth/login')
                     .send({
                         emailAdress: 'a.name@server.nl',
                         password: 'foutwachtwoorD12'
                     })
                     .end((err, res) => {
                         assert.ifError(err)
-                        res.should.have.status(409)
+                        res.should.have.status(400)
                         res.body.should.be.an('object')
                         res.body.should.have.property('status').equals(400)
                         res.body.should.have
@@ -118,7 +118,7 @@ describe('User testcases', () => {
                 })
         it('TC-101-3 Gebruiker bestaat niet', (done) => {
             chai.request(server)
-                .post('/api/user/login')
+                .post('/api/auth/login')
                 .send({
                     emailAdress: 'n.ietbestaand@server.nl',
                     password: 'Secret12'
@@ -138,7 +138,7 @@ describe('User testcases', () => {
            
         it('TC-101-4 Gebruiker succesvol ingelogd', (done) => {
             chai.request(server)
-                .post('/api/user/login')
+                .post('/api/auth/login')
                 .send({
                     emailAdress: 'a.name@sserver.nl',
                     password: 'Secret12'
@@ -655,8 +655,8 @@ describe('User testcases', () => {
                             .a('string')
                             .that.equals('0658449587')
                         data[0].isActive.should.be
-                            .a('boolean')
-                            .that.equals(true)
+                            .a('number')
+                            .that.equals(1)
                         done()
                     })
             })
@@ -710,7 +710,7 @@ describe('User testcases', () => {
                         done()
                     })
             })
-            it('TC-205-1 de gebruiker is niet de eigenaar van de data', (done) => {
+            it('TC-205-2 de gebruiker is niet de eigenaar van de data', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chai.request(server)
                     .put(endpointToTest + '/2')
@@ -721,7 +721,8 @@ describe('User testcases', () => {
                         emailAdress: 'c.name@server.nl',
                         street: 'street',
                         city: 'city',
-                        phoneNumber: '0658449587'
+                        phoneNumber: '0658449587',
+                        password: 'Secret12'
         })
         .end((err, res) => {
             assert.ifError(err)
@@ -747,7 +748,6 @@ describe('User testcases', () => {
                 isActive: 1,
                 password: "Wachtwoord12",
                 phoneNumber: "not a valid phone number",
-                roles: "editor"
             })
             .end((err, res) => {
                 assert.ifError(err);
@@ -768,7 +768,11 @@ describe('User testcases', () => {
             .send({
                 firstName: 'first',
                 lastName: 'last',
-                emailAdress: 'c.name@server.nl'
+                emailAdress: 'c.name@server.nl',
+                street: 'street',
+                city: 'city',
+                phoneNumber: '0658449587',
+                password: 'Secret12'
             })
             .end((err, res) => {
                 assert.ifError(err)
@@ -814,7 +818,8 @@ describe('User testcases', () => {
                     emailAdress: 'c.name@server.nl',
                     street: 'street',
                     city: 'city',
-                    phoneNumber: '0658449587'
+                    phoneNumber: '0658449587',
+                    password: 'Secret12'
                 })
                 .end((err, res) => {
                     assert.ifError(err)
@@ -891,7 +896,7 @@ describe('User testcases', () => {
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     assert.ifError(err)
-                    res.should.have.status(403)
+                    res.should.have.status(401)
                     res.body.should.be.an
                         .an('object')
                         .that.has.all.keys('status', 'message', 'data')

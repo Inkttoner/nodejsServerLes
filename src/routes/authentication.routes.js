@@ -14,21 +14,13 @@ const logger = require('../util/logger')
 function validateLogin(req, res, next) {
     // Verify that we receive the expected input
     try {
-        assert(
-            typeof req.body.emailAdress === 'string',
-            'email must be a string.'
-        )
         assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
         assert(req.body.password, 'Missing or incorrect password field')
-        assert(
-            typeof req.body.password === 'string',
-            'password must be a string.'
-        )
         next()
     } catch (ex) {
         next({
             status: 400,
-            message: ex.toString(),
+            message: ex.message,
             data: {}
         })
     }

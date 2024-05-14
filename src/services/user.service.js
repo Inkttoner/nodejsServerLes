@@ -225,6 +225,7 @@ const userService = {
                                 } else {
                                     logger.debug(results)
                                     callback(null, {
+                                        status: 200,
                                         message: `User with id ${id} deleted.`,
                                         data: results
                                     })

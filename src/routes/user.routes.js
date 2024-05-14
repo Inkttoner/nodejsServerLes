@@ -98,48 +98,6 @@ const validateUser = (req, res, next) => {
         })
     }
 }
-// const validateMailExists = (req, res, next) => {
-//     db.getConnection(function (err, connection) {
-//         if (err) throw err // not connected!
-
-//         // Use the connection
-//         connection.query(
-//             'SELECT * FROM user WHERE emailAdress = ?',
-//             [req.body.emailAdress],
-//             function (error, results, fields) {
-//                 // When done with the connection, release it.
-//                 connection.release()
-
-//                 // Handle error after the release.
-//                 if (error) throw error
-
-//                 // Don't use the connection here, it has been returned to the pool.
-//                 if (results.length > 0) {
-//                     next({
-//                         status: 403,
-//                         message: 'Email already exists in the database',
-//                         data: {}
-//                     })
-//                 } else {
-//                     next()
-//                 }
-//             }
-//         )
-//     })
-    
-//     if (existingUser) {
-//         next({
-//             status: 403,
-//             message: 'Email already exists in the database',
-//             data: {}
-//         })
-//     } else {
-//         next()
-//     }
-// }
-
-// Userroutes
-router.post('/api/user', validateUser, userController.create)
 router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', validateToken, userController.getById)
