@@ -134,6 +134,7 @@ const authController = {
                                         )
                                         res.status(200).json({
                                             statusCode: 200,
+                                            message: 'User logged in',
                                             results: { ...userinfo, token }
                                         })
                                     }

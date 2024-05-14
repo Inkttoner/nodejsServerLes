@@ -43,7 +43,7 @@ const INSERT_MEALS =
 
 const endpointToTest = '/api/user'
 
-describe('Example MySql testcase', () => {
+describe('User testcases', () => {
     //
     // informatie over before, after, beforeEach, afterEach:
     // https://mochajs.org/#hooks
@@ -55,7 +55,105 @@ describe('Example MySql testcase', () => {
         logger.debug('before done')
         done()
     })
+    describe('UC101 Inloggen', () => {
+        beforeEach((done) => {
+            logger.debug('beforeEach called')
+            // maak de testdatabase leeg zodat we onze testen kunnen uitvoeren.
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
 
+                // Use the connection
+                connection.query(
+                    CLEAR_DB + INSERT_USER,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        logger.debug('beforeEach done')
+                        done()
+                    }
+                )
+            })
+        })
+        it('TC-101-1 verplicht veld ontbreekt', (done) => {
+            chai.request(server)
+                .post('/api/user/login')
+                .send({
+                    // emailAdress: '', ontbreekt
+                    password: 'Secret12'
+                })
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(400)
+                    res.body.should.be.an('object')
+                    res.body.should.have.property('status').equals(400)
+                    res.body.should.have
+                        .property('message')
+                        .equals('Missing or incorrect emailAdress field')
+                    res.body.should.have.property('data').that.is.an('object').that.is.empty
+                    done()
+                })
+            })
+            it('TC-101-2 Niet-valide wachtwoord', (done) => {
+                chai.request(server)
+                    .post('/api/user/login')
+                    .send({
+                        emailAdress: 'a.name@server.nl',
+                        password: 'foutwachtwoorD12'
+                    })
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(409)
+                        res.body.should.be.an('object')
+                        res.body.should.have.property('status').equals(400)
+                        res.body.should.have
+                            .property('message')
+                            .equals('User not found or password invalid')
+                        res.body.should.have.property('data').that.is.an('object').that.is.empty
+                        done()
+                    })
+                })
+        it('TC-101-3 Gebruiker bestaat niet', (done) => {
+            chai.request(server)
+                .post('/api/user/login')
+                .send({
+                    emailAdress: 'n.ietbestaand@server.nl',
+                    password: 'Secret12'
+                })
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(404)
+                    res.body.should.be.an('object')
+                    res.body.should.have.property('status').equals(404)
+                    res.body.should.have
+                        .property('message')
+                        .equals('User not found')
+                    res.body.should.have.property('data').that.is.an('object').that.is.empty
+                    done()
+                })
+            })
+           
+        it('TC-101-4 Gebruiker succesvol ingelogd', (done) => {
+            chai.request(server)
+                .post('/api/user/login')
+                .send({
+                    emailAdress: 'a.name@sserver.nl',
+                    password: 'Secret12'
+                })
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an('object')
+                    res.body.should.have.property('status').equals(200)
+                    res.body.should.have.property('message').equals('User logged in')
+                    res.body.should.have.property('data').that.is.an('object').that.is.not.empty
+                    done()
+                })
+            })
+    })
     describe('UC201 Reading a user should succeed', () => {
         //
         beforeEach((done) => {
@@ -563,7 +661,7 @@ describe('Example MySql testcase', () => {
                     })
             })
         })
-        describre('UC-205 updaten van usergegevens', () => {
+        describe('UC-205 updaten van usergegevens', () => {
             beforeEach((done) => {
                 logger.debug('beforeEach called')
                 db.getConnection(function (err, connection) {
@@ -731,4 +829,95 @@ describe('Example MySql testcase', () => {
                 })
             })
     })
-})
+    describe('UC-206 verwijderen van usergegevens', () => {
+        beforeEach((done) => {
+            logger.debug('beforeEach called')
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
+
+                // Use the connection
+                connection.query(
+                    CLEAR_DB + INSERT_USER + INSERT_USER2,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        logger.debug('beforeEach done')
+                        done()
+                    }
+                )
+            })
+        })
+        it('TC-206-1 gebruiker bestaat niet', (done) => {   
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+            chai.request(server)
+                .delete(endpointToTest + '/1000')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(404)
+                    res.body.should.be.an
+                        .an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('object').that.is.empty
+                    res.body.message.should.contain('User not found')
+                    done()
+                })
+        })
+        it('TC-206-2 niet ingelogd', (done) => {
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+            chai.request(server)
+                .delete(endpointToTest + '/1')
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(401)
+                    res.body.should.be.an
+                        .an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('object').that.is.empty
+                    res.body.message.should.contain('Authorization header missing!')
+                    done()
+                })
+        })
+        it('TC-206-3 de gebruiker is niet de eigenaar van de data', (done) => {
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+            chai.request(server)
+                .delete(endpointToTest + '/2')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(403)
+                    res.body.should.be.an
+                        .an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('object').that.is.empty
+                    res.body.message.should.contain('Unauthorized')
+                    done()
+                })
+        })
+        it('TC-206-4 gebruiker succesvol verwijderd', (done) => {
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+            chai.request(server)
+                .delete(endpointToTest + '/1')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an
+                        .an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('object').that.is.empty
+                    res.body.message.should.contain('User with id 1 deleted.')
+                    done()
+                })
+            })
+        })
+    })
+
