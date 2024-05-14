@@ -45,6 +45,7 @@ const userService = {
                     } else {
                         logger.debug(results)
                         callback(null, {
+                            status: 201,
                             message: `User created with id ${results.insertId}.`,
                             data: results
                         })

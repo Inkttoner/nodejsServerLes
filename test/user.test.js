@@ -200,9 +200,10 @@ describe('Example MySql testcase', () => {
                         .an('object')
                         .that.has.all.keys('status', 'message', 'data')
                     res.body.status.should.be.a('number')
-
+                    res.body.message.should.be.a('string')
                     const data = res.body.data
 
+                
                     data.should.be.an('array').that.has.lengthOf(1)
                     data[0].should.be
                         .an('object')
@@ -217,11 +218,14 @@ describe('Example MySql testcase', () => {
                         )
                     data[0].id.should.be.a('number').that.equals(1)
                     data[0].firstName.should.be.a('string').that.equals('first')
-                    data[0].lastName.should.be.a('string').that.equals('last')
+                    data[0].lastName.should.be.a('string').that.equals('de Kruijf')
                     data[0].emailAdress.should.be
                         .a('string')
-                        .that.equals('name@server.nl')
-                    data[0].password.should.be.a('string').that.equals('secret')
+                        .that.equals('c.dekruijf@server.nl')
+                    data[0].password.should.be.a('string').that.equals('Geheim12')
+                    data[0].street.should.be.a('string').that.equals('de Lind')
+                    data[0].city.should.be.a('string').that.equals('Oisterwijk')
+                    data[0].phoneNumber.should.be.a('string').that.equals('0658774685')
                     done()
                 })
         })
