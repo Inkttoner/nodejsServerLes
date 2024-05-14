@@ -290,7 +290,8 @@ const userService = {
                         logger.debug(results)
                         callback(null, {
                             status: 404,
-                            message: `no user found with id ${userId}.`
+                            message: `no user found with id ${userId}.`,
+                            data:{}
                         })
                     } else {
                         logger.debug(results)

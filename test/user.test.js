@@ -502,7 +502,7 @@ describe('Example MySql testcase', () => {
                         res.body.status.should.be.a('number')
                         res.body.data.should.be.an('object').that.is.empty
                         res.body.message.should.contain(
-                            'User with id: 3 not found!'
+                            'User with id: 1000 not found!'
                         )
                         done()
                     })
@@ -511,7 +511,7 @@ describe('Example MySql testcase', () => {
             it('TC-204-3 user id bestaat', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
                 chai.request(server)
-                    .get(endpointToTest + '/2')
+                    .get(endpointToTest + '/1')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         assert.ifError(err)
@@ -537,7 +537,7 @@ describe('Example MySql testcase', () => {
                                 'phoneNumber',
                                 'isActive'
                             )
-                        data[0].id.should.be.a('number').that.equals(2)
+                        data[0].id.should.be.a('number').that.equals(1)
                         data[0].firstName.should.be
                             .a('string')
                             .that.equals('first')
