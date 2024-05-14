@@ -64,8 +64,8 @@ let userController = {
     
         // Check if the requested userId matches the logged-in userId
         if (userId != loggedInUser) {
-            return res.status(401).json({
-                status: 401,
+            return res.status(403).json({
+                status: 403,
                 message: 'Unauthorized',
                 data: {}
             })

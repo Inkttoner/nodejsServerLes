@@ -108,6 +108,13 @@ const userService = {
     },
     changeUser: (id, newData, callback) => {
         logger.info('changeUser', id, newData)
+        if (newData.emailAdress.length === 0) {
+            callback(null, {
+                status: 400,
+                message: `Email must not be empty.`,
+                data: {}
+            })
+        }
         db.getConnection(function (err, connection) {
             if (err) {
                 logger.error(err)

@@ -41,7 +41,7 @@ const validateUserCreateChaiShould = (req, res, next) => {
     }
 }
 
-const validateUserCreateChaiAssert = (req, res, next) => {
+const validateUser = (req, res, next) => {
     try {
         //Assert first name
         assert(req.body.firstName, 'Missing or incorrect firstName field')
@@ -139,7 +139,7 @@ const validateUserCreateChaiAssert = (req, res, next) => {
 // }
 
 // Userroutes
-router.post('/api/user', validateUserCreateChaiAssert, userController.create)
+router.post('/api/user', validateUser, userController.create)
 router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', validateToken, userController.getById)
@@ -157,7 +157,7 @@ router.get('/', (req, res) => {
     res.redirect('/api/info')
 })
 
-router.put('/api/user/:userId', validateToken, userController.update)
+router.put('/api/user/:userId', validateToken, validateUser, userController.update)
 router.delete('/api/user/:userId', validateToken, userController.delete)
 // meal routes
 router.get('/api/meal', mealController.getAll)
