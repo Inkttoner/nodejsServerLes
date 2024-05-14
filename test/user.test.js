@@ -25,8 +25,8 @@ const CLEAR_DB = CLEAR_MEAL_TABLE + CLEAR_PARTICIPANTS_TABLE + CLEAR_USERS_TABLE
  * Deze id kun je als foreign key gebruiken in de andere queries, bv insert meal.
  */
 const INSERT_USER =
-    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
-    '(1, "first", "last", "a.name@server.nl", "Secret12", "street", "city");'
+    'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city`,`phoneNumber` ) VALUES' +
+    '(1, "first", "last", "a.name@server.nl", "Secret12", "street", "city","0658449587");'
 const INSERT_USER2 =
     'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
     '(2, "first", "last", "b.name@server.nl", "Secret12", "street", "city");'

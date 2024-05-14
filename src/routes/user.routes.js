@@ -85,11 +85,6 @@ const validateUserCreateChaiAssert = (req, res, next) => {
             /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(req.body.password), 
             'Invalid password'
         )
-        //Assert email existence
-        assert(
-            !validateMailExists(req.body.emailAdress),
-            'Email already exists in the database'
-        )
 
         logger.trace('User successfully validated')
         next()
@@ -118,7 +113,7 @@ const validateMailExists = (req, res, next) => {
 }
 
 // Userroutes
-router.post('/api/user', validateUserCreateChaiAssert, userController.create)
+router.post('/api/user', validateUserCreateChaiAssert, validateMailExists, userController.create)
 router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', validateToken, userController.getById)
