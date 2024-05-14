@@ -1,12 +1,12 @@
 process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
 process.env.LOGLEVEL = 'trace'
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../index')
 const assert = require('assert')
 const logger = require('../src/util/logger')
-require('dotenv').config()
 const db = require('../src/dao/mysql-db')
 
 chai.should()
@@ -347,11 +347,24 @@ describe('Example MySql testcase', () => {
     describe ('UC-203 opvragen van gebruikersprofiel', () => {
     beforeEach((done) => {
         logger.debug('beforeEach called');
-        try {
-            query(CLEAR_DB + INSERT_USER + INSERT_USER2).then(() => done());
-        } catch (err) {
-            throw err;
-        }
+        db.getConnection(function (err, connection) {
+            if (err) throw err; // not connected!
+
+            // Use the connection
+            connection.query(
+                CLEAR_DB + INSERT_USER + INSERT_USER2,
+                function (error, results, fields) {
+                    // When done with the connection, release it.
+                    connection.release();
+
+                    // Handle error after the release.
+                    if (error) throw error;
+                    // Let op dat je done() pas aanroept als de query callback eindigt!
+                    logger.debug('beforeEach done');
+                    done();
+                }
+            );
+        });
 
         it('TC-203-1 ongeldig token', (done) => {
             const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
