@@ -546,7 +546,7 @@ describe('Example MySql testcase', () => {
                             .that.equals('last')
                         data[0].emailAdress.should.be
                             .a('string')
-                            .that.equals('b.name@server.nl')
+                            .that.equals('a.name@server.nl')
                         data[0].street.should.be
                             .a('string')
                             .that.equals('street')
@@ -563,4 +563,172 @@ describe('Example MySql testcase', () => {
                     })
             })
         })
+        describre('UC-205 updaten van usergegevens', () => {
+            beforeEach((done) => {
+                logger.debug('beforeEach called')
+                db.getConnection(function (err, connection) {
+                    if (err) throw err // not connected!
+
+                    // Use the connection
+                    connection.query(
+                        CLEAR_DB + INSERT_USER + INSERT_USER2,
+                        function (error, results, fields) {
+                            // When done with the connection, release it.
+                            connection.release()
+
+                            // Handle error after the release.
+                            if (error) throw error
+                            // Let op dat je done() pas aanroept als de query callback eindigt!
+                            logger.debug('beforeEach done')
+                            done()
+                        }
+                    )
+                })
+            })
+            it('TC-205-1 verplicht veld `emailAddress ontbreekt`', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+                chai.request(server)
+                    .put(endpointToTest + '/1')
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({
+                        firstName: 'first',
+                        lastName: 'last',
+                        password: 'Secret12',
+                        street: 'street',
+                        city: 'city',
+                        phoneNumber: '0658449587'
+                    })
+                    .end((err, res) => {
+                        assert.ifError(err)
+                        res.should.have.status(400)
+                        res.body.should.be.an
+                            .an('object')
+                            .that.has.all.keys('status', 'message', 'data')
+                        res.body.status.should.be.a('number')
+                        res.body.data.should.be.an('object').that.is.empty
+                        res.body.message.should.contain(
+                            'Missing or incorrect emailAdress field'
+                        )
+                        done()
+                    })
+            })
+            it('TC-205-1 de gebruiker is niet de eigenaar van de data', (done) => {
+                const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+                chai.request(server)
+                    .put(endpointToTest + '/2')
+                    .set('Authorization', 'Bearer ' + token)
+                    .send({
+                        firstName: 'first',
+                        lastName: 'last',
+                        emailAdress: 'c.name@server.nl',
+                        street: 'street',
+                        city: 'city',
+                        phoneNumber: '0658449587'
+        })
+        .end((err, res) => {
+            assert.ifError(err)
+            res.should.have.status(403)
+            res.body.should.be.an
+                .an('object')
+                .that.has.all.keys('status', 'message', 'data')
+            res.body.status.should.be.a('number')
+            res.body.data.should.be.an('object').that.is.empty
+            res.body.message.should.contain('Unauthorized')
+            done()
+        })
     })
+    it('TC-205-3 Niet-valide telefoonnummer', (done) => {
+        const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
+        chaiServer.request(server)
+            .put(endpointToTest + '/1')
+            .set('Authorization', 'Bearer ' + token)
+            .send({
+                firstName: "first",
+                lastName: "last",
+                emailAdress: "c.name@gmail.com",
+                isActive: 1,
+                password: "Wachtwoord12",
+                phoneNumber: "not a valid phone number",
+                roles: "editor"
+            })
+            .end((err, res) => {
+                assert.ifError(err);
+                res.should.have.status(400);
+                res.body.should.be.an.an('object')
+                    .that.has.all.keys('status', 'message', 'data');
+                res.body.status.should.be.a('number');
+                res.body.data.should.be.an('object').that.is.empty;
+                res.body.message.should.contain("Invalid phone number");
+                done();
+            });
+    }); 
+    it('TC-205-4 gebruiker bestaat niet', (done) => {
+        const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+        chai.request(server)
+            .put(endpointToTest + '/1000')
+            .set('Authorization', 'Bearer ' + token)
+            .send({
+                firstName: 'first',
+                lastName: 'last',
+                emailAdress: 'c.name@server.nl'
+            })
+            .end((err, res) => {
+                assert.ifError(err)
+                res.should.have.status(404)
+                res.body.should.be.an
+                    .an('object')
+                    .that.has.all.keys('status', 'message', 'data')
+                res.body.status.should.be.a('number')
+                res.body.data.should.be.an('object').that.is.empty
+                res.body.message.should.contain('User not found')
+                done()
+            })
+        })
+        it('TC-205-5 niet ingelogd', (done) => {
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+        chai.request(server)
+            .put(endpointToTest + '/1000')
+            .send({
+                firstName: 'first',
+                lastName: 'last',
+                emailAdress: 'c.name@server.nl'
+            })
+            .end((err, res) => {
+                assert.ifError(err)
+                res.should.have.status(401)
+                res.body.should.be.an
+                    .an('object')
+                    .that.has.all.keys('status', 'message', 'data')
+                res.body.status.should.be.a('number')
+                res.body.data.should.be.an('object').that.is.empty
+                res.body.message.should.contain('Authorization header missing!')
+                done()
+            })
+        })
+        it('TC-205-6 gebruiker succesvol geupdate', (done) => {
+            const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
+            chai.request(server)
+                .put(endpointToTest + '/1')
+                .set('Authorization', 'Bearer ' + token)
+                .send({
+                    firstName: 'first changed',
+                    lastName: 'last',
+                    emailAdress: 'c.name@server.nl',
+                    street: 'street',
+                    city: 'city',
+                    phoneNumber: '0658449587'
+                })
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an
+                        .an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('object').that.is.empty
+                    res.body.message.should.contain('User with id 1 updated.')
+                    done()
+                })
+            })
+    })
+})
