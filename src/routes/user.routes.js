@@ -7,6 +7,7 @@ const userController = require('../controllers/user.controller')
 const mealController = require('../controllers/meal.controller')
 const logger = require('../util/logger')
 const database = require('../dao/inmem-db')
+const db = require('../dao/mysql-db')
 const validateToken = require('./authentication.routes').validateToken
 const validateToken2 = require('./authentication.routes').validateToken2
 // const showLog = require('./authentication.routes').showLog
@@ -98,9 +99,34 @@ const validateUserCreateChaiAssert = (req, res, next) => {
     }
 }
 const validateMailExists = (req, res, next) => {
-    const existingUser = database._data.find(
-        (user) => user.emailAdress === req.body.emailAdress
-    )
+    db.getConnection(function (err, connection) {
+        if (err) throw err // not connected!
+
+        // Use the connection
+        connection.query(
+            'SELECT * FROM user WHERE emailAdress = ?',
+            [req.body.emailAdress],
+            function (error, results, fields) {
+                // When done with the connection, release it.
+                connection.release()
+
+                // Handle error after the release.
+                if (error) throw error
+
+                // Don't use the connection here, it has been returned to the pool.
+                if (results.length > 0) {
+                    next({
+                        status: 403,
+                        message: 'Email already exists in the database',
+                        data: {}
+                    })
+                } else {
+                    next()
+                }
+            }
+        )
+    })
+    
     if (existingUser) {
         next({
             status: 403,

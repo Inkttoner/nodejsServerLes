@@ -63,6 +63,7 @@ describe('Example MySql testcase', () => {
 
                 // Use the connection
                 connection.query(
+                    
                     CLEAR_DB + INSERT_USER,
                     function (error, results, fields) {
                         // When done with the connection, release it.
@@ -193,7 +194,7 @@ describe('Example MySql testcase', () => {
                 })
                 .end((err, res) => {
                     assert.ifError(err)
-                    res.should.have.status(200)
+                    res.should.have.status(201)
                     res.should.be.an('object')
 
                     res.body.should.be
