@@ -108,16 +108,6 @@ const userService = {
     },
     changeUser: (id, newData, callback) => {
         logger.info('changeUser', id, newData)
-        // database.update(id, newData, (err, data) => {
-        //     if (err) {
-        //         callback(err, null)
-        //     } else {
-        //         callback(null, {
-        //             message: `User with id ${id} updated.`,
-        //             data: data
-        //         })
-        //     }
-        // })
         db.getConnection(function (err, connection) {
             if (err) {
                 logger.error(err)
@@ -251,6 +241,7 @@ const userService = {
                     } else {
                         logger.debug(results)
                         callback(null, {
+                            status: 200,
                             message: `Found ${results.length} user.`,
                             data: results
                         })
@@ -286,6 +277,7 @@ const userService = {
                     } else {
                         logger.debug(results)
                         callback(null, {
+                            status: 200,
                             message: `Found ${results.length} user.`,
                             data: results
                         })
