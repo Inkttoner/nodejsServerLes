@@ -57,26 +57,11 @@ describe('Example MySql testcase', () => {
         //
         beforeEach((done) => {
             logger.debug('beforeEach called')
-            // maak de testdatabase leeg zodat we onze testen kunnen uitvoeren.
-            db.getConnection(function (err, connection) {
-                if (err) throw err // not connected!
-
-                // Use the connection
-                connection.query(
-                    
-                    CLEAR_DB + INSERT_USER,
-                    function (error, results, fields) {
-                        // When done with the connection, release it.
-                        connection.release()
-
-                        // Handle error after the release.
-                        if (error) throw error
-                        // Let op dat je done() pas aanroept als de query callback eindigt!
-                        logger.debug('beforeEach done')
-                        done()
-                    }
-                )
-            })
+            try {
+                query(CLEAR_DB + INSERT_USER).then(() => done())
+            } catch (err) {
+                throw err
+            }
         })
         it('TC-201-1 Verplicht veld ontbreekt', (done) => {
             chai.request(server)
