@@ -1,7 +1,7 @@
 require('dotenv').config()
 process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
 process.env.LOGLEVEL = 'trace'
-process.env.JWT_SECRET =  process.env.JWT_SECRET || 'DitIsEenGeheim'
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'DitIsEenGeheim'
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -267,8 +267,7 @@ describe('Example MySql testcase', () => {
         })
         it('TC-202-1 Toon alle gebruikers', (done) => {
             const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-            chai
-                .request(server)
+            chai.request(server)
                 .get(endpointToTest)
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
@@ -288,8 +287,7 @@ describe('Example MySql testcase', () => {
 
         it('TC-202-2 Toon gebruikers met zoekterm op niet-bestaande velden.', (done) => {
             const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-            chai
-                .request(server)
+            chai.request(server)
                 .get(
                     endpointToTest +
                         '?nonExistentField=first&nonExistentField=last'
@@ -312,9 +310,8 @@ describe('Example MySql testcase', () => {
 
         it('TC-202-3 Toon gebruikers met gebruik van de zoekterm op het veld `isActive`=fals', (done) => {
             const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-            chai
-                .request(server)
-                .get(endpointToTest + '?isActive=false')
+            chai.request(server)
+                .get(endpointToTest + '?isActive=0')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     assert.ifError(err)
@@ -331,9 +328,8 @@ describe('Example MySql testcase', () => {
 
         it('TC-202-4 Toon gebruikers met gebruik van de zoekterm op het veld `isActive`=true', (done) => {
             const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-            chai
-                .request(server)
-                .get(endpointToTest + '?isActive=true')
+            chai.request(server)
+                .get(endpointToTest + '?isActive=1')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     assert.ifError(err)
@@ -352,8 +348,7 @@ describe('Example MySql testcase', () => {
 
         it('TC-202-5 Toon gebruikers met zoektermen op bestaande velden', (done) => {
             const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-            chai
-                .request(server)
+            chai.request(server)
                 .get(endpointToTest + '?firstName=first&lastName=last')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
@@ -395,8 +390,7 @@ describe('Example MySql testcase', () => {
 
             it('TC-203-1 ongeldig token', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-                chai
-                    .request(server)
+                chai.request(server)
                     .get(endpointToTest + '/1')
                     .set('Authorization', 'Bearer ' + 'wrongToken')
                     .end((err, res) => {
@@ -413,8 +407,7 @@ describe('Example MySql testcase', () => {
             })
             it('TC-203-2 gebruiker is ingelogd met geldig token', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-                chai
-                    .request(server)
+                chai.request(server)
                     .get(endpointToTest + '/1')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
@@ -478,8 +471,7 @@ describe('Example MySql testcase', () => {
 
             it('TC-204-1 ongeldig token', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-                chai
-                    .request(server)
+                chai.request(server)
                     .get(endpointToTest + '/1')
                     .set('Authorization', 'Bearer ' + 'wrongToken')
                     .end((err, res) => {
@@ -497,8 +489,7 @@ describe('Example MySql testcase', () => {
 
             it('TC-204-2 user id bestaat niet', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-                chai
-                    .request(server)
+                chai.request(server)
                     .get(endpointToTest + '/3')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
@@ -518,8 +509,7 @@ describe('Example MySql testcase', () => {
 
             it('TC-204-3 user id bestaat', (done) => {
                 const token = jwt.sign({ userId: 1 }, process.env.JWT_SECRET)
-                chai
-                    .request(server)
+                chai.request(server)
                     .get(endpointToTest + '/2')
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
@@ -529,31 +519,48 @@ describe('Example MySql testcase', () => {
                             .an('object')
                             .that.has.all.keys('status', 'message', 'data')
                         res.body.status.should.be.a('number')
-                        res.body.data.should.be.an('object').that.is.not.empty
+                        res.body.data.should.be.an('array').that.has.lengthOf(1)
                         res.body.message.should.contain(
                             'Found user with id: 2.'
                         )
-                        res.body.data.firstName.should.be
+                        data[0].should.be
+                            .an('object')
+                            .that.has.all.keys(
+                                'id',
+                                'firstName',
+                                'lastName',
+                                'emailAdress',
+                                'password',
+                                'street',
+                                'city',
+                                'phoneNumber',
+                                'isActive'
+                            )
+                        data[0].id.should.be.a('number').that.equals(2)
+                        data[0].firstName.should.be
                             .a('string')
                             .that.equals('first')
-                        res.body.data.lastName.should.be
+                        data[0].lastName.should.be
                             .a('string')
                             .that.equals('last')
-                        res.body.data.emailAdress.should.be
+                        data[0].emailAdress.should.be
                             .a('string')
                             .that.equals('b.name@server.nl')
-                        res.body.data.password.should.be
+                        data[0].password.should.be
                             .a('string')
                             .that.equals('Secret12')
-                        res.body.data.street.should.be
+                        data[0].street.should.be
                             .a('string')
                             .that.equals('street')
-                        res.body.data.city.should.be
+                        data[0].city.should.be
                             .a('string')
                             .that.equals('city')
-                        res.body.data.phoneNumber.should.be
+                        data[0].phoneNumber.should.be
                             .a('string')
                             .that.equals('0658449587')
+                        data[0].isActive.should.be
+                            .a('boolean')
+                            .that.equals(true)
                         done()
                     })
             })

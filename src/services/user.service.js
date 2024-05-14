@@ -75,12 +75,13 @@ const userService = {
             }
     
             let query = 'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user`';
+            const validColumns = ['id', 'firstName', 'lastName', 'emailAdress', 'phoneNumber', 'isActive', 'city', 'street'];
             let params = [];
     
             if (filters) {
                 let isFirst = true;
                 for (let key in filters) {
-                    if (filters.hasOwnProperty(key)) {
+                    if (filters.hasOwnProperty(key)&& validColumns.includes(key)) {
                         query += isFirst ? ' WHERE' : ' AND';
                         query += ` ${key} = ?`;
                         params.push(filters[key]);
@@ -279,6 +280,7 @@ const userService = {
                     } else if (results.length === 0) {
                         logger.debug(results)
                         callback(null, {
+                            status: 404,
                             message: `no user found with id ${userId}.`
                         })
                     } else {
