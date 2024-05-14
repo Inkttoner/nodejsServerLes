@@ -65,7 +65,7 @@ const userService = {
             )
         })
     },
-    getAll: (callback) => {
+    getAll: (filters, callback) => {
         logger.info('getAll')
         db.getConnection(function (err, connection) {
             if (err) {
@@ -73,24 +73,37 @@ const userService = {
                 callback(err, null)
                 return
             }
-
-            connection.query(
-                'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user`',
-                function (error, results, fields) {
-                    connection.release()
-
-                    if (error) {
-                        logger.error(error)
-                        callback(error, null)
-                    } else {
-                        logger.debug(results)
-                        callback(null, {
-                            message: `Found ${results.length} users.`,
-                            data: results
-                        })
+    
+            let query = 'SELECT id, firstName, lastName, emailAdress, phoneNumber FROM `user`';
+            let params = [];
+    
+            if (filters) {
+                let isFirst = true;
+                for (let key in filters) {
+                    if (filters.hasOwnProperty(key)) {
+                        query += isFirst ? ' WHERE' : ' AND';
+                        query += ` ${key} = ?`;
+                        params.push(filters[key]);
+                        isFirst = false;
                     }
                 }
-            )
+            }
+    
+            connection.query(query, params, function (error, results, fields) {
+                connection.release()
+    
+                if (error) {
+                    logger.error(error)
+                    callback(error, null)
+                } else {
+                    logger.debug(results)
+                    callback(null, {
+                        status: 200,
+                        message: `Found ${results.length} users.`,
+                        data: results
+                    })
+                }
+            })
         })
     },
     changeUser: (id, newData, callback) => {

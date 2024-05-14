@@ -26,7 +26,18 @@ let userController = {
 
     getAll: (req, res, next) => {
         logger.trace('getAll')
-        userService.getAll((error, success) => {
+        const filters = req.query;
+        const filterKeys = Object.keys(filters);
+    
+        if (filterKeys.length > 2) {
+            return next({
+                status: 400,
+                message: 'You can specify a maximum of 2 filters.',
+                data: {}
+            });
+        }
+    
+        userService.getAll(filters, (error, success) => {
             if (error) {
                 return next({
                     status: error.status,

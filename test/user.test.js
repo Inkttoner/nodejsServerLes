@@ -40,6 +40,8 @@ const INSERT_MEALS =
     "(1, 'Meal A', 'description', 'image url', NOW(), 5, 6.50, 1)," +
     "(2, 'Meal B', 'description', 'image url', NOW(), 5, 6.50, 1);"
 
+const endpointToTest = '/api/user'
+
 describe('Example MySql testcase', () => {
     //
     // informatie over before, after, beforeEach, afterEach:
@@ -79,7 +81,7 @@ describe('Example MySql testcase', () => {
         })
         it('TC-201-1 Verplicht veld ontbreekt', (done) => {
             chai.request(server)
-                .post('/api/user')
+                .post(endpointToTest)
                 .send({
                     // firstName: 'Voornaam', ontbreekt
                     lastName: 'de Kruijf',
@@ -104,7 +106,7 @@ describe('Example MySql testcase', () => {
         })
         it('TC-201-2 Niet valide email adres', (done) => {
             chai.request(server)
-                .post('/api/user')
+                .post(endpointToTest)
                 .send({
                     firstName: 'first',
                     lastName: 'de Kruijf',
@@ -129,7 +131,7 @@ describe('Example MySql testcase', () => {
         })
         it('TC-201-3 Niet-valide password', (done) => {
             chai.request(server)
-                .post('/api/user')
+                .post(endpointToTest)
                 .send({
                     firstName: 'first',
                     lastName: 'de Kruijf',
@@ -155,7 +157,7 @@ describe('Example MySql testcase', () => {
         })
         it('TC-201-4 gebruiker bestaat al', (done) => {
             chai.request(server)
-                .post('/api/user')
+                .post(endpointToTest)
                 .send({
                     firstName: 'first',
                     lastName: 'de Kruijf',
@@ -181,7 +183,7 @@ describe('Example MySql testcase', () => {
 
         it('TC-201-5 gebruiker succesvol geregistreed', (done) => {
             chai.request(server)
-                .post('/api/user')
+                .post(endpointToTest)
                 .send({
                     firstName: 'first',
                     lastName: 'de Kruijf',
@@ -233,4 +235,114 @@ describe('Example MySql testcase', () => {
                 })
         })
     })
-})
+    describe('UC202 Opvragen van overzicht van alle users', () => {
+        //
+        beforeEach((done) => {
+            logger.debug('beforeEach called')
+            // maak de testdatabase leeg zodat we onze testen kunnen uitvoeren.
+            db.getConnection(function (err, connection) {
+                if (err) throw err // not connected!
+
+                // Use the connection
+                connection.query(
+                    CLEAR_DB + INSERT_USER + INSERT_USER2,
+                    function (error, results, fields) {
+                        // When done with the connection, release it.
+                        connection.release()
+
+                        // Handle error after the release.
+                        if (error) throw error
+                        // Let op dat je done() pas aanroept als de query callback eindigt!
+                        logger.debug('beforeEach done')
+                        done()
+                    }
+                )
+            })
+        })
+        it('TC-202-1 show all users', (done) => {
+            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
+            chaiServer.request(server)
+                .get(endpointToTest)
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an.an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2);
+                    res.body.message.should.contain('Found 2 users')
+                    done()
+                });
+        });
+
+        it('TC-202-2 show users with search query with none existent fields', (done) => {
+            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
+            chaiServer.request(server)
+                .get(endpointToTest + '?nonExistentField=first&nonExistentField=last')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err)
+                    res.should.have.status(200)
+                    res.body.should.be.an.an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2)
+                    res.body.message.should.contain('Invalid query fields')
+                    done()
+                })
+        })
+
+        it('TC-202-3 show users with search query isActive = false', (done) => {
+            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY);
+            chaiServer.request(server)
+                .get(endpointToTest + '?isActive=false')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err);
+                    res.should.have.status(200);
+                    res.body.should.be.an.an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('array').that.is.empty;
+                    res.body.message.should.contain('Found 0 users')
+                    done()
+                })
+        })
+
+        it('TC-202-4 show users with search query isActive = true', (done) => {
+            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
+            chaiServer.request(server)
+                .get(endpointToTest + '?isActive=true')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err);
+                    res.should.have.status(200);
+                    res.body.should.be.an.an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2);
+                    res.body.message.should.contain('Found 2 users')
+                    done();
+                });
+        });
+
+        it('TC-202-5 show users with search query with existing fields', (done) => {
+            const token = jwt.sign({ userId: 1}, process.env.JWT_KEY)
+            chaiServer.request(server)
+                .get(endpointToTest + '?firstName=first&lastName=last')
+                .set('Authorization', 'Bearer ' + token)
+                .end((err, res) => {
+                    assert.ifError(err);
+                    res.should.have.status(200)
+                    res.body.should.be.an.an('object')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
+                    res.body.data.should.be.an('array').that.is.not.empty.and.is.lengthOf.above(2);
+                    res.body.message.should.contain('Found 2 users')
+                    done()
+                })
+        })
+    })
+    })
+
