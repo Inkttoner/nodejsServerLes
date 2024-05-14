@@ -152,11 +152,19 @@ let userController = {
                 })
             }
             if (success) {
-                res.status(200).json({
-                    status: success.status,
-                    message: success.message,
-                    data: success.data
-                })
+                if (success.data.length === 0) {
+                    res.status(404).json({
+                        status: 404,
+                        message: `No user found with id ${userId}.`,
+                        data: {}
+                    })
+                } else {
+                    res.status(200).json({
+                        status: success.status,
+                        message: success.message,
+                        data: success.data
+                    })
+                }
             }
         })
     },
