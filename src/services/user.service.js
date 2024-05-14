@@ -29,7 +29,19 @@ const userService = {
 
                     if (error) {
                         logger.error(error)
-                        callback(error, null)
+                        if (error.code === 'ER_DUP_ENTRY') {
+                            callback(
+                                {
+                                    status: 403,
+                                    message:
+                                        'Email already exists in the database',
+                                    data: {}
+                                },
+                                null
+                            )
+                        } else {
+                            callback(error, null)
+                        }
                     } else {
                         logger.debug(results)
                         callback(null, {
@@ -41,7 +53,6 @@ const userService = {
             )
         })
     },
-
     getAll: (callback) => {
         logger.info('getAll')
         db.getConnection(function (err, connection) {
@@ -108,37 +119,37 @@ const userService = {
                     } else {
                         // If the user exists, update it
                         connection.query(
-                        'UPDATE `user` SET firstName = ?, lastName = ?, emailAdress = ?, password = ?, street = ?, city = ?, isActive = ?, phoneNumber = ? WHERE id = ?',
-                        [
-                            newData.firstName,
-                            newData.lastName,
-                            newData.emailAdress,
-                            newData.password,
-                            newData.street,
-                            newData.city,
-                            newData.isActive,
-                            newData.phoneNumber,
-                            id
-                        ],
-                        function (error, results, fields) {
-                            connection.release()
-        
-                            if (error) {
-                                logger.error(error)
-                                callback(error, null)
-                            } else {
-                                logger.debug(results)
-                                callback(null, {
-                                    message: `User with id ${id} updated.`,
-                                    data: results
-                                })
+                            'UPDATE `user` SET firstName = ?, lastName = ?, emailAdress = ?, password = ?, street = ?, city = ?, isActive = ?, phoneNumber = ? WHERE id = ?',
+                            [
+                                newData.firstName,
+                                newData.lastName,
+                                newData.emailAdress,
+                                newData.password,
+                                newData.street,
+                                newData.city,
+                                newData.isActive,
+                                newData.phoneNumber,
+                                id
+                            ],
+                            function (error, results, fields) {
+                                connection.release()
+
+                                if (error) {
+                                    logger.error(error)
+                                    callback(error, null)
+                                } else {
+                                    logger.debug(results)
+                                    callback(null, {
+                                        message: `User with id ${id} updated.`,
+                                        data: results
+                                    })
+                                }
                             }
-                        }
-                    )}
-            
+                        )
+                    }
+                }
+            )
         })
-    })
-    
     },
     deleteUser: (id, callback) => {
         logger.info('deleteUser', id)
@@ -245,9 +256,9 @@ const userService = {
                     } else if (results.length === 0) {
                         logger.debug(results)
                         callback(null, {
-                            message: `no user found with id ${userId}.`,
+                            message: `no user found with id ${userId}.`
                         })
-                    }else{
+                    } else {
                         logger.debug(results)
                         callback(null, {
                             message: `Found ${results.length} user.`,
