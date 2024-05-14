@@ -214,9 +214,11 @@ describe('Example MySql testcase', () => {
                             'emailAdress',
                             'password',
                             'street',
-                            'city'
+                            'city',
+                            'phoneNumber',
+                            'isActive'
                         )
-                    data[0].id.should.be.a('number').that.equals(1)
+                    data[0].id.should.be.a('number').that.equals(42)
                     data[0].firstName.should.be.a('string').that.equals('first')
                     data[0].lastName.should.be.a('string').that.equals('de Kruijf')
                     data[0].emailAdress.should.be
@@ -226,6 +228,7 @@ describe('Example MySql testcase', () => {
                     data[0].street.should.be.a('string').that.equals('de Lind')
                     data[0].city.should.be.a('string').that.equals('Oisterwijk')
                     data[0].phoneNumber.should.be.a('string').that.equals('0658774685')
+                    data[0].isActive.should.be.a('number').that.equals(1)
                     done()
                 })
         })
