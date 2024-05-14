@@ -83,7 +83,7 @@ const validateUserCreateChaiAssert = (req, res, next) => {
         assert(req.body.password.length > 0, 'password must not be empty')
         assert(
             /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(req.body.password), 
-            'Invalid password'
+            'Password must contain at least 8 characters, 1 uppercase letter, and 1 digit'
         )
 
         logger.trace('User successfully validated')

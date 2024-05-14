@@ -166,6 +166,7 @@ describe('Example MySql testcase', () => {
                     phoneNumber: '0658774685'
                 })
                 .end((err, res) => {
+                    assert.ifError(err)
                     res.should.have.status(403)
                     res.body.should.be.a('object')
                     res.body.should.have.property('status').equals(403)
@@ -181,6 +182,15 @@ describe('Example MySql testcase', () => {
         it('TC-201-5 gebruiker succesvol geregistreed', (done) => {
             chai.request(server)
                 .post('/api/user')
+                .send({
+                    firstName: 'first',
+                    lastName: 'de Kruijf',
+                    emailAdress: 'c.dekruijf@server.nl',
+                    password: 'Geheim12',
+                    street: 'de Lind',
+                    city: 'Oisterwijk',
+                    phoneNumber: '0658774685'
+                })
                 .end((err, res) => {
                     assert.ifError(err)
                     res.should.have.status(200)
