@@ -41,3 +41,7 @@ const INSERT_MEALS =
     "(1, 'Meal A', 'description', 'image url', NOW(), 5, 6.50, 1)," +
     "(2, 'Meal B', 'description', 'image url', NOW(), 5, 6.50, 1);"
 const endpointToTest = '/api/meal'
+describe('Meal testcases', () => {
+    describe('TC ')
+
+})

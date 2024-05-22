@@ -140,7 +140,7 @@ describe('User testcases', () => {
             chai.request(server)
                 .post('/api/auth/login')
                 .send({
-                    emailAdress: 'a.name@sserver.nl',
+                    emailAdress: 'a.name@server.nl',
                     password: 'Secret12'
                 })
                 .end((err, res) => {
