@@ -8,7 +8,6 @@ process.env.JWT_SECRET = process.env.JWT_SECRET || 'DitIsEenGeheim';
 import jwt from 'jsonwebtoken';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../index';
 import assert from 'assert';
 import logger from '../src/util/logger';
 import db from '../src/dao/mysql-db';
