@@ -6,10 +6,8 @@ const router = express.Router()
 const userController = require('../controllers/user.controller')
 const mealController = require('../controllers/meal.controller')
 const logger = require('../util/logger')
-const database = require('../dao/inmem-db')
-const db = require('../dao/mysql-db')
 const validateToken = require('./authentication.routes').validateToken
-const validateToken2 = require('./authentication.routes').validateToken2
+
 // const showLog = require('./authentication.routes').showLog
 
 // Tijdelijke functie om niet bestaande routes op te vangen
@@ -26,81 +24,113 @@ function showLog(req, res, next) {
 }
 
 // Input validation function 2 met gebruik van assert
-const validateUserCreateChaiShould = (req, res, next) => {
+const validateUser = (req, res, next) => {
     try {
-        req.body.firstName.should.not.be.empty.and.a('string')
-        req.body.lastName.should.not.be.empty.and.a('string')
-        req.body.emailAdress.should.not.be.empty.and.a('string').and.match(/@/)
-        next()
+        assert(req.body.firstName, 'Missing or incorrect firstName field');
+        expect(req.body.firstName).to.not.be.empty;
+        expect(req.body.firstName).to.be.a('string');
+        expect(req.body.firstName).to.match(
+            /^[a-zA-Z]+$/,
+            'firstName must be a string'
+        );
+
+        assert(req.body.lastName, 'Missing or incorrect lastName field');
+        expect(req.body.lastName).to.not.be.empty;
+        expect(req.body.lastName).to.be.a('string');
+        expect(req.body.lastName).to.match(
+            /^[a-zA-Z]+$/,
+            'lastName must be a string'
+        );
+
+        assert(req.body.emailAdress, 'Missing or incorrect emailAdress field');
+        expect(req.body.emailAdress).to.not.be.empty;
+        expect(req.body.emailAdress).to.be.a('string');
+        expect(req.body.emailAdress).to.match(
+            /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+            'emailAdress must be a correct email'
+        );
+
+        assert(req.body.isActive, 'Missing or incorrect isActive field');
+        expect(req.body.isActive).to.not.be.undefined;
+        expect(req.body.isActive).to.be.a('number');
+        expect(req.body.isActive).to.match(
+            /^[01]$/,
+            'isActive must be a correct email'
+        );
+
+        assert(req.body.password, 'Missing or incorrect password field');
+        expect(req.body.password).to.not.be.empty;
+        expect(req.body.password).to.be.a('string');
+        expect(req.body.password).to.have.lengthOf.above(3);
+
+        assert(req.body.phoneNumber, 'Missing or incorrect phone number field');
+        expect(req.body.phoneNumber).to.not.be.empty;
+        expect(req.body.phoneNumber).to.be.a('string');
+        expect(req.body.phoneNumber).to.match(
+            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
+            'phone number must be a correct phone number'
+        );
+
+        assert(req.body.roles, 'Missing or incorrect roles field');
+        expect(req.body.roles).to.not.be.empty;
+        expect(req.body.roles).to.be.a('string');
+
+        next();
     } catch (ex) {
-        next({
+        logger.trace('User validation failed:', ex.message)
+        res.status(400).send({
             status: 400,
             message: ex.message,
             data: {}
-        })
+        });
     }
 }
 
-const validateUser = (req, res, next) => {
+const validateUserId = (req, res, next) => {
     try {
-        //Assert first name
-        assert(req.body.firstName, 'Missing or incorrect firstName field')
-        assert(req.body.firstName.length > 0, 'firstName must not be empty')
-        assert(
-            typeof req.body.firstName === 'string',
-            'firstName must be a string'
-        )
-        assert(
-            /^[a-zA-Z]+$/.test(req.body.firstName),
-            'firstName must be a string'
-        )
-        //Assert last name
-        assert(req.body.lastName, 'Missing or incorrect lastName field')
-        assert(req.body.lastName.length > 0, 'lastName must not be empty')
-        assert(
-            typeof req.body.lastName === 'string',
-            'lastName must be a string'
-        )
-        assert(
-            /^[a-zA-Z\s]+$/.test(req.body.lastName),
-            'lastName must be a string'
-        )
-        //Assert emailAdress
-        assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
-        assert(req.body.emailAdress.length > 0, 'emailAdress must not be empty')
-        assert(
-            /^[a-z]\.[a-z]{2,}@([a-z]{2,}\.){1}[a-z]{2,3}$/i.test(req.body.emailAdress),
-            'Invalid email format'
-        )
-        //Assert phoneNumber
-        assert(req.body.phoneNumber, 'Missing or incorrect phoneNumber field')
-        assert(req.body.phoneNumber.length > 0, 'phoneNumber must not be empty')
-        assert(
-            /^06[-\s]?\d{8}$/.test(req.body.phoneNumber),
-            'Invalid phone number'
-        )
-        //Assert password
-        assert(req.body.password, 'Missing or incorrect password field')
-        assert(req.body.password.length > 0, 'password must not be empty')
-        assert(
-            /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(req.body.password), 
-            'Password must contain at least 8 characters, 1 uppercase letter, and 1 digit'
-        )
-
-        logger.trace('User successfully validated')
-        next()
+        assert(req.params.userId, 'Missing or incorrect id!');
+        expect(req.params.userId).to.not.be.empty;
+        expect(parseInt(req.params.userId)).to.be.a('number');
+        logger.trace('User successfully validated');
+        next();
     } catch (ex) {
         logger.trace('User validation failed:', ex.message)
-        next({
+        res.status(400).send({
             status: 400,
             message: ex.message,
             data: {}
-        })
+        });
+    }
+}
+
+const validateLogin = (req, res, next) => {
+    try {
+        assert(req.body.emailAdress, 'Missing or incorrect emailAdress field');
+        expect(req.body.emailAdress).to.not.be.empty;
+        expect(req.body.emailAdress).to.be.a('string');
+        expect(req.body.emailAdress).to.match(
+            /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+            'emailAdress must be a correct email'
+        );
+
+        assert(req.body.password, 'Missing or incorrect password field');
+        expect(req.body.password).to.not.be.empty;
+        expect(req.body.password).to.be.a('string');
+        expect(req.body.password).to.have.lengthOf.above(3);
+
+        next();
+    } catch (ex) {
+        logger.trace('User validation failed:', ex.message)
+        res.status(400).send({
+            status: 400,
+            message: ex.message,
+            data: {}
+        });
     }
 }
 router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
-router.get('/api/user/:userId', validateToken, userController.getById)
+router.get('/api/user/:userId', validateToken, validateUserId, userController.getById)
 router.get('/api/info', (req, res) => {
     console.log('GET /api/info')
     const info = {
@@ -115,8 +145,10 @@ router.get('/', (req, res) => {
     res.redirect('/api/info')
 })
 
-router.put('/api/user/:userId', validateToken, validateUser, userController.update)
-router.delete('/api/user/:userId', validateToken, userController.delete)
+router.put('/api/user/:userId', validateToken, validateUser, validateUserId, userController.update)
+router.delete('/api/user/:userId', validateToken, validateUserId, userController.delete)
+
+
 // meal routes
 router.get('/api/meal', mealController.getAll)
 router.post('/api/meal', validateToken, mealController.create)
