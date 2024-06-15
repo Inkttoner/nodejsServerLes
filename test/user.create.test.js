@@ -1,7 +1,7 @@
-const chai = require('chai')
-const chaiHttp = require('chai-http')
-const server = require('../index')
-const tracer = require('tracer')
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../index';
+import tracer from 'tracer';
 
 chai.should()
 chai.use(chaiHttp)

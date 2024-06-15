@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "shareAMeal",
     "version": "0.1.0",
     "description": "Eindproject programmeren 4",

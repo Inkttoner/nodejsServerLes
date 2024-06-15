@@ -1,12 +1,15 @@
-const express = require('express')
-const assert = require('assert')
-const chai = require('chai')
-chai.should()
-const router = express.Router()
-const userController = require('../controllers/user.controller')
-const mealController = require('../controllers/meal.controller')
-const logger = require('../util/logger')
-const validateToken = require('./authentication.routes').validateToken
+import express from 'express';
+import assert from 'assert';
+import chai from 'chai';
+chai.should();
+
+const router = express.Router();
+
+import userController from '../controllers/user.controller';
+import mealController from '../controllers/meal.controller';
+import logger from '../util/logger';
+import { validateToken } from './authentication.routes';
+
 
 // const showLog = require('./authentication.routes').showLog
 

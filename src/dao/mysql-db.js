@@ -1,6 +1,10 @@
-const mysql = require('mysql2')
-const logger = require('../util/logger')
-require('dotenv').config()
+import dotenv from 'dotenv'
+dotenv.config()
+import mysql from 'mysql2'
+import logger from '../util/logger'
+
+
+
 
 const dbConfig = {
     host: process.env.DB_HOST,

@@ -13,4 +13,4 @@ const logger = require('tracer').colorConsole({
     level: loglevel
 })
 
-module.exports = logger
+export default logger

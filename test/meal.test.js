@@ -1,14 +1,17 @@
-require('dotenv').config()
-process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
-process.env.LOGLEVEL = 'trace'
-process.env.JWT_SECRET = process.env.JWT_SECRET || 'DitIsEenGeheim'
-const jwt = require('jsonwebtoken')
-const chai = require('chai')
-const chaiHttp = require('chai-http')
-const server = require('../index')
-const assert = require('assert')
-const logger = require('../src/util/logger')
-const db = require('../src/dao/mysql-db')
+import dotenv from 'dotenv';
+dotenv.config();
+
+process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb';
+process.env.LOGLEVEL = 'trace';
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'DitIsEenGeheim';
+
+import jwt from 'jsonwebtoken';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../index';
+import assert from 'assert';
+import logger from '../src/util/logger';
+import db from '../src/dao/mysql-db';
 
 chai.should()
 chai.use(chaiHttp)

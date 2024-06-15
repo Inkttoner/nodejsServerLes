@@ -1,13 +1,12 @@
 //
 // Authentication routes
-//
-const assert = require('assert')
-const jwt = require('jsonwebtoken')
-const jwtSecretKey = require('../util/config').secretkey
-const routes = require('express').Router()
-const AuthController = require('../controllers/authentication.controller')
-const logger = require('../util/logger')
 
+import assert from 'assert'
+import jwt from 'jsonwebtoken'
+import { jwtSecretKey } from '../util/config'
+import AuthController from '../controllers/authentication.controller'
+import logger from '../util/logger'
+const routes = require('express').Router()
 //
 //
 //

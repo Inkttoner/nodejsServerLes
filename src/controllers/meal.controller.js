@@ -1,7 +1,6 @@
-const e = require('express')
-const logger = require('../util/logger')
-const mealService = require('../services/meal.service')
 
+import logger from '../util/logger'
+import mealService from '../services/meal.service'
 
 let mealController = {
     getAll: (req, res, next) => {

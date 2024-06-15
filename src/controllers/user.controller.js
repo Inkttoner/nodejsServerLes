@@ -1,6 +1,5 @@
-const e = require("express");
-const userService = require("../services/user.service");
-const logger = require("../util/logger");
+import userService from '../services/user.service'
+import logger from '../util/logger'
 
 let userController = {
     create: (req, res, next) => {

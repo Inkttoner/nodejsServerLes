@@ -1,12 +1,14 @@
-const express = require('express')
-const assert = require('assert')
-const chai = require('chai')
-chai.should()
-const router = express.Router()
-const mealController = require('../controllers/meal.controller')
-const logger = require('../util/logger')
-const database = require('../dao/inmem-db')
-const validateToken = require('./authentication.routes').validateToken
+import express from 'express';
+import assert from 'assert';
+import chai from 'chai';
+chai.should();
+
+const router = express.Router();
+
+import mealController from '../controllers/meal.controller';
+import logger from '../util/logger';
+import database from '../dao/inmem-db';
+import { validateToken } from './authentication.routes';
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {

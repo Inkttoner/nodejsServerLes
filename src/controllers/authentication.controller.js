@@ -1,8 +1,5 @@
-//
-// Authentication controller
-//
-const logger = require('../util/logger')
-const authService = require('../services/authentication.service')
+import logger from '../util/logger'
+import authService from '../services/authentication.service'
 
 const authController = {
     login: (req, res, next) => {

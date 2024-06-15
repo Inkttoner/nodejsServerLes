@@ -1,5 +1,5 @@
-const logger = require('../util/logger')
-const db = require('../dao/mysql-db')
+import logger from '../util/logger'
+import db from '../dao/mysql-db'
 
 const mealService = {
     create: (meal, userID, callback) => {
@@ -252,4 +252,4 @@ LEFT JOIN user AS participant ON meal_participants_user.userID = participant.id
     }
 }
 
-module.exports = mealService
+export default mealService

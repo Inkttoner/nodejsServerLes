@@ -1,11 +1,12 @@
 //
 // Authentication controller
 //
-const jwt = require('jsonwebtoken')
-const db = require('../dao/mysql-db')
-// const validateEmail = require('../util/emailvalidator')
-const logger = require('../util/logger')
-const jwtSecretKey = require('../util/config').secretkey
+
+
+import logger from '../util/logger'
+import db from '../dao/mysql-db'
+import jwt from 'jsonwebtoken'
+import { jwtSecretKey } from '../util/config'
 
 const authController = {
     login: (userCredentials, callback) => {

@@ -1,6 +1,6 @@
-const logger = require("../util/logger");
-const { query } = require("../dao/mysql-db");
-const jwt = require("jsonwebtoken");
+import logger from "../util/logger";
+import { query } from "../dao/mysql-db";
+import jwt from "jsonwebtoken";
 
 const sign = (payload, secret, options) => {
     return new Promise((resolve, reject) => {
