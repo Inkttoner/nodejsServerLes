@@ -1,6 +1,6 @@
 
-import logger from '../util/logger'
-import mealService from '../services/meal.service'
+import logger from '../util/logger.js'
+import mealService from '../services/meal.service.js'
 
 let mealController = {
     getAll: (req, res, next) => {
@@ -108,4 +108,4 @@ let mealController = {
         })
     }
 }
-module.exports = mealController
+export default mealController

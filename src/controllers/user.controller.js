@@ -1,5 +1,5 @@
-import userService from '../services/user.service'
-import logger from '../util/logger'
+import userService from '../services/user.service.js'
+import logger from '../util/logger.js'
 
 let userController = {
     create: (req, res, next) => {
@@ -171,4 +171,4 @@ let userController = {
     },
 };
 
-module.exports = userController;
+export default userController;

@@ -1,16 +1,19 @@
 //
 // Authentication routes
-
+import dotenv from 'dotenv'
 import assert from 'assert'
 import jwt from 'jsonwebtoken'
-import { jwtSecretKey } from '../util/config'
-import AuthController from '../controllers/authentication.controller'
-import logger from '../util/logger'
-const routes = require('express').Router()
+import AuthController from '../controllers/authentication.controller.js'
+import logger from '../util/logger.js'
+import express from 'express'
+
+const routes = express.Router()
+
+const jwtSecretKey = process.env.JWT_SECRET_KEY
 //
 //
 //
-function validateLogin(req, res, next) {
+export function validateLogin(req, res, next) {
     // Verify that we receive the expected input
     try {
         assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
@@ -28,11 +31,11 @@ function validateLogin(req, res, next) {
 //
 //
 //
-function showLog(req, res, next) {
+export function showLog(req, res, next) {
     logger.info('Log message')
     next()
 }
-function validateToken(req, res, next) {
+export function validateToken(req, res, next) {
     logger.info('validateToken called')
     logger.trace('Headers:', req.headers)
     // The headers should contain the authorization-field with value 'Bearer [token]'
@@ -74,4 +77,4 @@ function validateToken(req, res, next) {
 
 routes.post('/login', validateLogin, AuthController.login)
 
-module.exports = { routes, validateToken, showLog }
+export default routes

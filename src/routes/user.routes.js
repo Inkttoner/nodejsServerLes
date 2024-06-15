@@ -1,14 +1,14 @@
 import express from 'express';
 import assert from 'assert';
-import chai from 'chai';
+import {expect, assert, should} from 'chai';
 chai.should();
 
 const router = express.Router();
 
-import userController from '../controllers/user.controller';
-import mealController from '../controllers/meal.controller';
-import logger from '../util/logger';
-import { validateToken } from './authentication.routes';
+import userController from '../controllers/user.controller.js';
+import mealController from '../controllers/meal.controller.js';
+import logger from '../util/logger.js';
+import { validateToken } from './authentication.routes.js';
 
 
 // const showLog = require('./authentication.routes').showLog
@@ -131,26 +131,16 @@ const validateLogin = (req, res, next) => {
         });
     }
 }
-router.get('/api/user', validateToken, userController.getAll)
-router.get('/api/user/profile', validateToken, userController.getProfile)
-router.get('/api/user/:userId', validateToken, validateUserId, userController.getById)
-router.get('/api/info', (req, res) => {
-    console.log('GET /api/info')
-    const info = {
-        name: 'Share a Meal API',
-        version: '0.1.0',
-        description:
-            'This is my first Nodejs Express server for the share a meal case'
-    }
-    res.json(info)
-})
-router.get('/', (req, res) => {
-    res.redirect('/api/info')
-})
+router.get('/api/user', validateToken, controller.getAll);
+router.get('/api/user/profile', validateToken, controller.profile);
+router.get('/api/user/:userId',  validateToken, validateUserId, controller.getById);
 
-router.put('/api/user/:userId', validateToken, validateUser, validateUserId, userController.update)
-router.delete('/api/user/:userId', validateToken, validateUserId, userController.delete)
+router.post('/api/user', validateUser, controller.create);
+router.post('/api/login', validateLogin, controller.login);
 
+router.put('/api/user/:userId', validateToken, validateUser, validateUserId, controller.update);
+
+router.delete('/api/user/:userId', validateToken, validateUserId, controller.delete);
 
 // meal routes
 router.get('/api/meal', mealController.getAll)
@@ -158,4 +148,5 @@ router.post('/api/meal', validateToken, mealController.create)
 router.get('/api/meal/:mealId', mealController.getById)
 router.delete('/api/meal/:mealId', validateToken, mealController.delete)
 router.use(notFound)
-module.exports = router
+
+export default router;

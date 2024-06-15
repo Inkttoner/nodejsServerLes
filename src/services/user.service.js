@@ -1,5 +1,5 @@
-import logger from "../util/logger";
-import { query } from "../dao/mysql-db";
+import logger from "../util/logger.js";
+import  query  from "../dao/mysql-db.js";
 import jwt from "jsonwebtoken";
 
 const sign = (payload, secret, options) => {

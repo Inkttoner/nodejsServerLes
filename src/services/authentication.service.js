@@ -3,10 +3,10 @@
 //
 
 
-import logger from '../util/logger'
-import db from '../dao/mysql-db'
+import logger from '../util/logger.js'
+import db from '../dao/mysql-db.js'
 import jwt from 'jsonwebtoken'
-import { jwtSecretKey } from '../util/config'
+const jwtSecretKey = process.env.JWT_SECRET_KEY
 
 const authController = {
     login: (userCredentials, callback) => {
@@ -158,5 +158,4 @@ const authController = {
         })
     }
 }
-
-module.exports = authController
+export default authController

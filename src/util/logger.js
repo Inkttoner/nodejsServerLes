@@ -1,16 +1,14 @@
-//
-// Application configuration
-//
-// Set the logging level.
-const loglevel = process.env.LOGLEVEL || 'trace'
+import { colorConsole } from 'tracer';
 
-const logger = require('tracer').colorConsole({
+const loglevel = process.env.LOGLEVEL || 'trace';
+
+const logger = colorConsole({
     format: ['{{timestamp}} <{{title}}> {{file}}:{{line}} : {{message}}'],
     preprocess: function (data) {
-        data.title = data.title.toUpperCase()
+        data.title = data.title.toUpperCase();
     },
     dateformat: 'isoUtcDateTime',
     level: loglevel
-})
+});
 
-export default logger
+export default logger;

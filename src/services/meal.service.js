@@ -1,5 +1,5 @@
-import logger from '../util/logger'
-import db from '../dao/mysql-db'
+import logger from '../util/logger.js'
+import db from '../dao/mysql-db.js'
 
 const mealService = {
     create: (meal, userID, callback) => {

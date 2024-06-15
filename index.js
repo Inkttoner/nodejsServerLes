@@ -1,9 +1,12 @@
-const express = require('express')
-const userRoutes = require('./src/routes/user.routes')
-const mealRoutes = require('./src/routes/meal.routes')
-const logger = require('./src/util/logger')
-const authRoutes = require('./src/routes/authentication.routes').routes
+import express from 'express'
+import logger from './src/util/logger.js'
+import authRoutes from './src/routes/authentication.routes.js'
+import userRoutes from './src/routes/user.routes.js'
+import mealRoutes from './src/routes/meal.routes.js'
 const app = express()
+
+
+
 
 // express.json zorgt dat we de body van een request kunnen lezen
 app.use(express.json())
@@ -38,4 +41,4 @@ app.listen(port, () => {
 })
 
 // Deze export is nodig zodat Chai de server kan opstarten
-module.exports = app
+export default app

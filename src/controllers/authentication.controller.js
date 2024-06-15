@@ -1,5 +1,5 @@
-import logger from '../util/logger'
-import authService from '../services/authentication.service'
+import logger from '../util/logger.js'
+import authService from '../services/authentication.service.js'
 
 const authController = {
     login: (req, res, next) => {
@@ -23,5 +23,4 @@ const authController = {
         })
     }
 }
-
-module.exports = authController
+export default authController

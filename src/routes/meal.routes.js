@@ -1,14 +1,13 @@
 import express from 'express';
 import assert from 'assert';
-import chai from 'chai';
+import {should, assert, expect} from 'chai';
 chai.should();
 
 const router = express.Router();
 
-import mealController from '../controllers/meal.controller';
-import logger from '../util/logger';
-import database from '../dao/inmem-db';
-import { validateToken } from './authentication.routes';
+import mealController from '../controllers/meal.controller.js';
+import logger from '../util/logger.js';
+import { validateToken } from './authentication.routes.js';
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -27,4 +26,4 @@ function showLog(req, res, next) {
 router.get('/api/meal', mealController.getAll)
 
 
-module.exports = router
+export default router;

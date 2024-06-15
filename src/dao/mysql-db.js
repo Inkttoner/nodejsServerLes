@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 import mysql from 'mysql2'
-import logger from '../util/logger'
+import logger from '../util/logger.js'
 
 
 
