@@ -104,11 +104,11 @@ const validateMeal = (req, res, next) => {
     }
 }
 
-router.get('/api/meal', mealController.getAll);
-router.get('/api/meal/:mealId', validateMealId, mealController.getById);
+// router.get('/api/meal', mealController.getAll);
+// router.get('/api/meal/:mealId', validateMealId, mealController.getById);
 
-router.post('/api/meal', validateToken, validateMeal, mealController.create);
-router.delete('/api/meal/:mealId', validateToken, validateMealId, mealController.delete);
-router.put("/api/meal/:mealId", validateToken, validateMeal, validateMealId, mealController.update);
+// router.post('/api/meal', validateToken, validateMeal, mealController.create);
+// router.delete('/api/meal/:mealId', validateToken, validateMealId, mealController.delete);
+// router.put("/api/meal/:mealId", validateToken, validateMeal, validateMealId, mealController.update);
 
 export default router;
