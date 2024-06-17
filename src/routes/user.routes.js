@@ -127,7 +127,9 @@ const validateLogin = (req, res, next) => {
         });
     }
 };
-router.get("/", res.send("Hello World!"));
+router.get("/", (req, res) => {
+    res.send("Hello World!");
+});
 router.get("/api/user", validateToken, controller.getAll);
 router.get("/api/user/profile", validateToken, controller.getProfile);
 router.get(
