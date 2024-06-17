@@ -9,7 +9,6 @@ import mealController from "../controllers/meal.controller.js";
 import logger from "../util/logger.js";
 import { validateToken } from "../auth.js";
 
-
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
     next({
@@ -128,6 +127,7 @@ const validateLogin = (req, res, next) => {
         });
     }
 };
+router.get("/", res.send("Hello World!"));
 router.get("/api/user", validateToken, controller.getAll);
 router.get("/api/user/profile", validateToken, controller.getProfile);
 router.get(
