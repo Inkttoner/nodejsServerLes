@@ -13,7 +13,7 @@ function verify(token, key) {
         });
     });
 }
-
+// lijn
 export async function validateToken(req, res, next) {
     logger.info("validateToken called");
     logger.trace("Headers:", req.headers);
