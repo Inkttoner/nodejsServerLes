@@ -7,7 +7,7 @@ const app = express()
 
 
 
-// express.json zorgt dat we de body van een request kunnen lezen
+// express.json zorgt dat we de body van een request kunnen lezen !!1
 app.use(express.json())
 
 const port = process.env.PORT || 3000
