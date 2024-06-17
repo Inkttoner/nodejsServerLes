@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import assert from 'assert';
 import { should, expect } from 'chai';
-import logger from '../logger.js';
+import logger from '../util/logger.js';
 import { validateToken } from '../auth.js';
 import mealController from '../controllers/meal.controller.js';
 
