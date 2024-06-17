@@ -26,9 +26,7 @@ const hash = (password) => {
 
 const INSERT_USER =
     "INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES" +
-    `(1, "first", "last", "name@server.nl", "${await hash(
-        "secret"
-    )}", "street", "city");`;
+    `(1, "first", "last", "name@server.nl", "secret", "street", "city");`;
 const INSERT_USER2 =
     "INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES" +
     '(2, "first", "last", "name2@server.nl", "secret", "street", "city");';
@@ -255,7 +253,7 @@ describe("UC-201 - UC-205", () => {
                 .request(server)
                 .post(endpointToTest)
                 .send({
-                    firstName: "damian",
+                    firstName: "coen",
                     lastName: "last",
                     emailAdress: "name@server.nl", // email already exists
                     isActive: 1,
@@ -281,9 +279,9 @@ describe("UC-201 - UC-205", () => {
                 .request(server)
                 .post(endpointToTest)
                 .send({
-                    firstName: "damian",
+                    firstName: "coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "coen@gmail.com",
                     isActive: 1,
                     password: "cool",
                     phoneNumber: "0612345678",

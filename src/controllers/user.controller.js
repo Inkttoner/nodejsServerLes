@@ -1,68 +1,50 @@
-import userService from '../services/user.service.js'
-import logger from '../util/logger.js'
+import userService from "../services/user.service.js";
+import logger from "../util/logger.js";
 
-let userController = {
+const userController = {
     create: (req, res, next) => {
         const user = req.body;
-        logger.info("create user", user.firstName, user.lastName);
+        logger.info("create user");
         userService.create(user, (error, success) => {
             if (error) {
                 return next({
-                    status: error.status,
+                    status: 403,
                     message: error.message,
                     data: {},
                 });
             }
             if (success) {
                 res.status(201).json({
-                    status: success.status,
-                    message: success.message,
-                    data: success.data,
+                    ...success,
                 });
             }
         });
     },
 
     getAll: (req, res, next) => {
-        logger.trace("getAll");
-        const filters = req.query;
-        const filterKeys = Object.keys(filters);
-
-        if (filterKeys.length > 2) {
-            return next({
-                status: 400,
-                message: "You can specify a maximum of 2 filters.",
-                data: {},
-            });
-        }
-        userService.getAll((error, success) => {
+        logger.info("UserController: getAll users");
+        userService.getAll(req.query, (error, success) => {
             if (error) {
-                return next({
+                next({
                     status: error.status,
                     message: error.message,
                     data: {},
                 });
             }
             if (success) {
-                res.status(200).json({
-                    status: 200,
-                    message: success.message,
-                    data: success.data,
-                });
+                res.status(200).json({ ...success });
             }
         });
     },
 
     update: (req, res, next) => {
-        const userId = req.locals.userId;
-        const newData = req.body;
-
-        logger.info("update user", userId, newData);
-
+        const updatedUser = req.body;
+        const userId = res.locals.userId;
+        logger.info("UserController: update user");
         userService.changeUser(
             userId,
             parseInt(req.params.userId),
-            newData,
+            updatedUser,
             (error, success) => {
                 if (error) {
                     next({
@@ -72,36 +54,27 @@ let userController = {
                     });
                 }
                 if (success) {
-                    res.status(200).json({
-                        status: success.status,
-                        message: success.message,
-                        data: success.data,
-                    });
+                    res.status(200).json({ ...success });
                 }
             }
         );
     },
-
     delete: (req, res, next) => {
-        const userId = req.locals.userId;
-        logger.info("delete user", userId, loggedInUser);
+        const userId = res.locals.userId;
+        logger.info("UserController: delete user");
         userService.deleteUser(
             userId,
             parseInt(req.params.userId),
             (error, success) => {
                 if (error) {
                     next({
-                        status: 500,
-                        message: "Internal Server Error",
+                        status: error.status,
+                        message: error.message,
                         data: {},
                     });
                 }
                 if (success) {
-                    res.status(200).json({
-                        status: success.status,
-                        message: success.message,
-                        data: success.data,
-                    });
+                    res.status(200).json({ ...success });
                 }
             }
         );
@@ -110,10 +83,10 @@ let userController = {
     getById: (req, res, next) => {
         const userId = parseInt(req.params.userId);
         let withPassword = false;
-        if (req.locals.userId === userId) {
+        if (res.locals.userId === userId) {
             withPassword = true;
         }
-        logger.trace("userController: getById", userId);
+        logger.info("UserController: get user by id");
         userService.getById(userId, withPassword, (error, success) => {
             if (error) {
                 next({
@@ -123,17 +96,13 @@ let userController = {
                 });
             }
             if (success) {
-                res.status(200).json({
-                    status: success.status,
-                    message: success.message,
-                    data: success.data,
-                });
+                res.status(200).json({ ...success });
             }
         });
     },
     getProfile: (req, res, next) => {
-        logger.trace("getProfile for userId", userId);
-        userService.getProfile(req.locals.userId, (error, success) => {
+        logger.info("UserController: get profile");
+        userService.getProfile(res.locals.userId, (error, success) => {
             if (error) {
                 next({
                     status: error.status,
@@ -142,11 +111,7 @@ let userController = {
                 });
             }
             if (success) {
-                res.status(200).json({
-                    status: 200,
-                    message: success.message,
-                    data: success.data,
-                });
+                res.status(200).json({ ...success });
             }
         });
     },
@@ -162,9 +127,7 @@ let userController = {
             }
             if (success) {
                 res.status(200).json({
-                    status: 200,
-                    message: success.message,
-                    data: success.data,
+                    ...success,
                 });
             }
         });

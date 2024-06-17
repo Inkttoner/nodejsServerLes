@@ -1,6 +1,5 @@
 import express from 'express'
 import logger from './src/util/logger.js'
-import authRoutes from './src/routes/authentication.routes.js'
 import userRoutes from './src/routes/user.routes.js'
 import mealRoutes from './src/routes/meal.routes.js'
 const app = express()
@@ -14,9 +13,8 @@ app.use(express.json())
 const port = process.env.PORT || 3000
 
 // Hier komen alle routes
-app.use('/api/auth', authRoutes)
 app.use(userRoutes)
-// app.use(mealRoutes)
+app.use(mealRoutes)
 
 // Route error handler
 app.use((req, res, next) => {
