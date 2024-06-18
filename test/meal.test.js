@@ -1,5 +1,5 @@
 import query from "../src/dao/mysql-db.js";
-import server from "../index.js";
+import server from "../server.js";
 import { assert, should, use } from "chai";
 import chaiHttp from "chai-http";
 import { setLevel } from "tracer";

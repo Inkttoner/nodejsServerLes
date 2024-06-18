@@ -1,111 +1,99 @@
-
-import logger from '../util/logger.js'
-import mealService from '../services/meal.service.js'
+import logger from "../util/logger.js";
+import mealService from "../services/meal.service.js";
 
 let mealController = {
     getAll: (req, res, next) => {
-        logger.trace('getAll meals called')
+        logger.trace("getAll meals called");
         mealService.getAll((error, success) => {
             if (error) {
                 return next({
                     status: error.status,
                     message: error.message,
-                    data: {}
-                })
+                    data: {},
+                });
             }
             if (success) {
                 res.status(200).json({
-                    status: 200,
-                    message: success.message,
-                    data: success.data
-                })
+                    ...success,
+                });
             }
-        })
+        });
     },
     create: (req, res, next) => {
-        const userId = req.userId
-        logger.trace('create meal called')
-        mealService.create(req.body, userId, (error, success) => {
+        logger.trace("create meal called");
+        mealService.create(req.body, res.locals.userId, (error, success) => {
             if (error) {
                 return next({
-                    status: error.status,
+                    status: 403,
                     message: error.message,
-                    data: {}
-                })
+                    data: {},
+                });
             }
             if (success) {
-                res.status(201).json({
-                    status: 201,
-                    message: success.message,
-                    data: success.data
-                })
+                res.status(201).json({ ...success });
             }
-        })
+        });
     },
     getById: (req, res, next) => {
-        const mealId = req.params.mealId
-        logger.trace('getById meal called')
-        mealService.getById(mealId, (error, success) => {
+        logger.trace("getById meal called");
+        mealService.getById(req.params.mealId, (error, success) => {
             if (error) {
                 return next({
                     status: error.status,
                     message: error.message,
-                    data: {}
-                })
+                    data: {},
+                });
+            }
+            if (success) {
+                res.status(200).json({
+                    ...success,
+                });
+            }
+        });
+    },
+    delete: (req, res, next) => {
+        const mealId = parseInt(req.params.mealId);
+
+        logger.trace("delete meal called", mealId);
+
+        mealService.delete(mealId, res.locals.userId, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: {},
+                });
             }
             if (success) {
                 res.status(200).json({
                     status: 200,
                     message: success.message,
-                    data: success.data
-                })
+                });
             }
-        })
+        });
     },
-    delete: (req, res, next) => {
-        const mealId = req.params.mealId
-        const userId = req.userId
-    
-        logger.trace('delete meal called', mealId)
-    
-        mealService.getById(mealId, (error, success) => {
-            if (error) {
-                return next({
-                    status: error.status,
-                    message: error.message,
-                    data: {}
-                })
-            }
-    
-            if (success) {
-                const meal = success.data[0]
-                logger.info('delete meal', mealId, userId, meal.cookId)
-                if (userId !== meal.cookId) {
+    update: (req, res, next) => {
+        const mealId = parseInt(req.params.mealId);
+        logger.trace("update meal called");
+        mealService.update(
+            mealId,
+            req.body,
+            res.locals.userId,
+            (error, success) => {
+                if (error) {
                     return next({
-                        status: 403,
-                        message: "You are not authorized to delete this meal",
-                        data: {}
-                    })
+                        status: error.status,
+                        message: error.message,
+                        data: {},
+                    });
                 }
-    
-                mealService.delete(mealId, (error, success) => {
-                    if (error) {
-                        return next({
-                            status: error.status,
-                            message: error.message,
-                            data: {}
-                        })
-                    }
-                    if (success) {
-                        res.status(200).json({
-                            status: 200,
-                            message: success.message,
-                            data: success.data
-                        })
-                    }
-                })
+                if (success) {
+                    res.status(201).json({
+                        ...success,
+                    });
+                }
             }
-        })
-    }
-}
-export default mealController
+        );
+    },
+};
+export default mealController;

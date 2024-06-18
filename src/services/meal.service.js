@@ -1,255 +1,153 @@
-import logger from '../util/logger.js'
-import db from '../dao/mysql-db.js'
+import logger from "../util/logger.js";
+import db from "../dao/mysql-db.js";
+import query from "../dao/mysql-db.js";
 
 const mealService = {
-    create: (meal, userID, callback) => {
-        logger.info('create meal', meal, userID)
-        db.getConnection(function (err, connection) {
-            if (err) {
-                logger.error(err)
-                callback(err, null)
-                return
-            }
-                connection.query(
-                    'INSERT INTO `meal` (name, description, isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, allergenes, cookId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                    [
-                        meal.name,
-                        meal.description,
-                        meal.isActive,
-                        meal.isVega,
-                        meal.isVegan,
-                        meal.isToTakeHome,
-                        meal.dateTime,
-                        meal.maxAmountOfParticipants,
-                        meal.price,
-                        meal.imageUrl,
-                        meal.allergenes,
-                        userID
-                    ],
-                    function (error, results, fields) {
-                        connection.release()
-                        if (error) {
-                            return connection.rollback(function () {
-                                logger.error(error)
-                                callback(error, null)
-                            })
-                        }else{
-                            logger.debug(results)
-                            callback(null, {
-                                message: `Meal created with id ${results.insertId}.`,
-                                data: results
-                            }) 
-                        }
+    create: async (meal, userID, callback) => {
+        logger.info(`create meal with name ${meal.name} `);
+        const thisDate = new Date();
+        const formattedDate = `${thisDate.toJSON().split("T")[0]} ${
+            thisDate.toJSON().split("T")[1].split(".")[0]
+        }`;
+        try {
+            const createdMeal = await query(
+                "INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageURL, cookId, createDate, updateDate, name, description, allergenes)" +
+                    `VALUES (${meal.isActive}, ${meal.isVega}, ${meal.isVegan}, ${meal.isToTakeHome}, '${meal.dateTime}', ${meal.maxAmountOfParticipants}, ${meal.price}, '${meal.imageURL}', ${userID}, '${formattedDate}', '${formattedDate}', '${meal.name}', '${meal.description}', '${meal.allergenes}')`
+            );
 
-                       
-
-                    }
-                )
-            })
+            logger.info(`meal created with id ${createdMeal.insertId}`);
+            callback(null, {
+                status: 200,
+                message: `meal created with id ${createdMeal.insertId}`,
+                data: meal,
+            });
+        } catch (error) {
+            logger.error(`error creating meal:`, error.message);
+            callback(error, null);
+        }
     },
-    getAll: (callback) => {
-        logger.info('getAll')
-        db.getConnection(function (err, connection) {
-            if (err) {
-                logger.error(err)
-                callback(err, null)
-                return
+    getAll: async (callback) => {
+        logger.info("getAll");
+        try {
+            const meals = await query("SELECT * FROM meal");
+            for (let i = 0; i < meals.length; i++) {
+                const userCook = await query(
+                    `SELECT firstName, lastName, isActive, emailAdress, phoneNumber, street, city FROM user WHERE id = ${meals[i].cookId}`
+                );
+                meals[i].cook = userCook[0];
+                const participants = await query(
+                    `SELECT firstName, lastName, isActive, emailAdress, phoneNumber, street, city FROM user WHERE id in (SELECT userId FROM meal_participants_user where mealId = ${meals[i].id}) `
+                );
+                meals[i].participants = participants;
             }
-
-            connection.query(
-                `SELECT meal.id, meal.name, meal.description, meal.isActive, meal.isVega, meal.isVegan, meal.isToTakeHome, meal.dateTime, meal.maxAmountOfParticipants, meal.price, meal.imageUrl, meal.allergenes, 
-                    cook.firstname AS cook_firstname, cook.lastname AS cook_lastname, cook.emailAdress AS cook_emailAdress, cook.phoneNumber AS cook_phoneNumber,
-    participant.firstname AS participant_firstname, participant.lastname AS participant_lastname
-    FROM meal
-    INNER JOIN user AS cook ON meal.cookId = cook.id
-    LEFT JOIN meal_participants_user ON meal.id = meal_participants_user.mealID
-    LEFT JOIN user AS participant ON meal_participants_user.userID = participant.id`,
-                function (error, results, fields) {
-                    connection.release()
-
-                    if (error) {
-                        logger.error(error)
-                        callback(error, null)
-                    } else {
-                        const meals = {};
-
-                        results.forEach(result => {
-                            if (!meals[result.id]) {
-                                meals[result.id] = {
-                                    id: result.id,
-                                    name: result.name,
-                                    description: result.description,
-                                    // ... other meal properties
-                                    cook: {
-                                        firstname: result.cook_firstname,
-                                        lastname: result.cook_lastname,
-                                        emailAdress: result.cook_emailAdress,
-                                        phoneNumber: result.cook_phoneNumber
-                                    },
-                                    participants: []
-                                };
-                            }
-                        
-                            if (result.participant_firstname && result.participant_lastname) {
-                                meals[result.id].participants.push({
-                                    firstname: result.participant_firstname,
-                                    lastname: result.participant_lastname
-                                });
-                            }
-                        });
-                        
-                        const mappedResults = Object.values(meals);
-
-                        logger.debug(mappedResults)
-                        callback(null, {
-                            message: `Found ${mappedResults.length} meals.`,
-                            data: mappedResults
-                        })
-                    }
-                }
-            )
-        })
+            callback(null, {
+                status: 200,
+                message: `Found ${meals.length} meals.`,
+                data: meals,
+            });
+        } catch (error) {
+            logger.error(error);
+            callback(error, null);
+        }
     },
-    getById: (mealId, callback) => {
-        logger.info('getById', mealId)
-        db.getConnection(function (err, connection) {
-            if (err) {
-                logger.error(err)
-                callback(err, null)
-                return
+    getById: async (mealId, callback) => {
+        logger.info("getById", mealId);
+        try {
+            const meals = await query(
+                `SELECT * FROM meal WHERE id = ${mealId}`
+            );
+            if (!meals || meals.length < 1) {
+                throw {
+                    status: 404,
+                    message: `Meal with id: ${mealId} not found!`,
+                    data: {},
+                };
             }
-
-            connection.query(
-                `SELECT meal.id, meal.cookId, meal.name, meal.description, meal.isActive, meal.isVega, meal.isVegan, meal.isToTakeHome, meal.dateTime, meal.maxAmountOfParticipants, meal.price, meal.imageUrl, meal.allergenes, 
-                cook.firstname AS cook_firstname, cook.lastname AS cook_lastname, cook.emailAdress AS cook_emailAdress, cook.phoneNumber AS cook_phoneNumber,
-participant.firstname AS participant_firstname, participant.lastname AS participant_lastname, participant.emailAdress AS participant_emailAdress, participant.phoneNumber AS participant_phoneNumber
-FROM meal
-INNER JOIN user AS cook ON meal.cookId = cook.id
-LEFT JOIN meal_participants_user ON meal.id = meal_participants_user.mealID
-LEFT JOIN user AS participant ON meal_participants_user.userID = participant.id
-                    WHERE meal.id = ?`,
-                [mealId],
-                function (error, results, fields) {
-                    connection.release()
-
-                    if (error) {
-                        logger.error(error)
-                        callback(error, null)
-                    } else if (results.length === 0) {
-                        callback(
-                            {
-                                status: 404,
-                                message: `Meal with id ${mealId} not found.`,
-                                data: {}
-                            },
-                            null
-                        )
-                    } else {
-                        const meals = {};
-
-                        results.forEach(result => {
-                            if (!meals[result.id]) {
-                                meals[result.id] = {
-                                    id: result.id,
-                                    name: result.name,
-                                    description: result.description,
-                                    isActive: result.isActive,
-                                    isVega: result.isVega,
-                                    isVegan: result.isVegan,
-                                    isToTakeHome: result.isToTakeHome,
-                                    dateTime: result.dateTime,
-                                    maxAmountOfParticipants: result.maxAmountOfParticipants,
-                                    price: result.price,
-                                    imageUrl: result.imageUrl,
-                                    allergenes: result.allergenes,
-                                    cookId: result.cookId,
-                                    cook: {
-                                        firstname: result.cook_firstname,
-                                        lastname: result.cook_lastname,
-                                        emailAdress: result.cook_emailAdress,
-                                        phoneNumber: result.cook_phoneNumber
-                                    },
-                                    participants: []
-                                };
-                            }
-                        
-                            if (result.participant_firstname && result.participant_lastname) {
-                                meals[result.id].participants.push({
-                                    firstname: result.participant_firstname,
-                                    lastname: result.participant_lastname,
-                                    emailAdress: result.participant_emailAdress,
-                                    phoneNumber: result.participant_phoneNumber
-                                });
-                            }
-                        });
-                        
-                        const mappedResults = Object.values(meals);
-
-                        logger.debug(mappedResults)
-                        callback(null, {
-                            message: `Found meal with id ${mealId}.`,
-                            data: mappedResults
-                        })
-                    }
-                }
-            )
-        })
+            const userCook = await query(
+                `SELECT firstName, lastName, isActive, emailAdress, phoneNumber, street, city FROM user WHERE id = ${meals[0].cookId}`
+            );
+            meals[0].cook = userCook[0];
+            const participants = await query(
+                `SELECT firstName, lastName, isActive, emailAdress, phoneNumber, street, city FROM user WHERE id in (SELECT userId FROM meal_participants_user where mealId = ${meals[0].id}) `
+            );
+            meals[0].participants = participants;
+            callback(null, {
+                status: 200,
+                message: `Found meal with id: ${mealId}.`,
+                data: meals[0],
+            });
+        } catch (error) {
+            logger.error(error);
+            callback(error, null);
+        }
     },
-    delete: (mealId, callback) => {
-        
-        logger.info('delete meal', mealId)
-        db.getConnection(function (err, connection) {
-            if (err) {
-                logger.error(err)
-                callback(err, null)
-                return
+    delete: async (mealId, userId, callback) => {
+        logger.info("delete meal", mealId);
+        try {
+            const meal = await query(`SELECT * FROM meal WHERE id = ${mealId}`);
+            if (!meal || meal.length === 0) {
+                throw {
+                    status: 404,
+                    message: `Meal with id: ${mealId} not found!`,
+                    data: {},
+                };
             }
-            //check if meal exists
-            connection.query(
-                'SELECT * FROM `meal` WHERE id = ?',
-                [mealId],
-                function (error, results, fields) {
-                    if (error) {
-                        logger.error(error)
-                        callback(error, null)
-                        
-                    }else if (results.length === 0) {
-                        connection.release()
-                        callback(
-                            {
-                                status: 404,
-                                message: `Meal with id ${mealId} not found.`,
-                                data: {}
-                            },
-                            null
-                        )
-                        
-                    }else{
-                        connection.query(
-                            'DELETE FROM `meal` WHERE id = ?',
-                            [mealId],
-                            function (error, results, fields) {
-                                connection.release()
-        
-                                if (error) {
-                                    return connection.rollback(function () {
-                                        logger.error(error)
-                                        callback(error, null)
-                                    })
-                                }
-        
-                                logger.debug(results)
-                                callback(null, {
-                                    message: `Meal with id ${mealId} deleted.`,
-                                    data: results
-                                })
-                            }
-                        )
-                    }
-                }
-            )   
-        })
-    }
-}
+            if (meal[0].cookId != userId) {
+                throw {
+                    status: 403,
+                    message: "Not authorized to delete this meal!",
+                    data: {},
+                };
+            }
+            await query(`DELETE FROM meal WHERE id = ${mealId}`);
+            callback(null, {
+                status: 200,
+                message: `Meal deleted with id ${mealId}.`,
+                data: {},
+            });
+        } catch (error) {
+            logger.error(error);
+            callback(error, null);
+        }
+    },
+    update: async (mealId, meal, userId, callback) => {
+        logger.info(`update meal with id ${mealId}`);
+        const thisDate = new Date();
+        const formattedDate = `${thisDate.toJSON().split("T")[0]} ${
+            thisDate.toJSON().split("T")[1].split(".")[0]
+        }`;
+        try {
+            const oldMeal = await query(
+                `SELECT * FROM meal WHERE id = ${mealId}`
+            );
 
-export default mealService
+            if (!oldMeal || oldMeal.length < 1) {
+                throw {
+                    status: 404,
+                    message: `Meal with id: ${mealId} not found!`,
+                    data: {},
+                };
+            }
+            if (oldMeal[0].cookId != userId) {
+                throw {
+                    status: 403,
+                    message: "Not authorized to update this meal!",
+                    data: {},
+                };
+            }
+            await query(
+                `UPDATE meal SET isActive = ${meal.isActive}, isVega = ${meal.isVega}, isVegan = ${meal.isVegan}, isToTakeHome = ${meal.isToTakeHome}, dateTime = '${meal.dateTime}', maxAmountOfParticipants = ${meal.maxAmountOfParticipants}, price = ${meal.price}, imageURL = '${meal.imageURL}', cookId = ${userId}, createDate = '${meal.createDate}', updateDate = '${formattedDate}', name = '${meal.name}', description = '${meal.description}', allergenes = '${meal.allergenes}' WHERE id = ${mealId};`
+            );
+            callback(null, {
+                status: 201,
+                message: `meal updated with id: ${mealId}`,
+                data: meal,
+            });
+        } catch (error) {
+            logger.error(error);
+            callback(error, null);
+        }
+    },
+};
+
+export default mealService;

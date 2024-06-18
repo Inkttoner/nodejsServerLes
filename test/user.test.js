@@ -1,5 +1,5 @@
 import query from "../src/dao/mysql-db.js";
-import server from "../index.js";
+import server from "../server.js";
 import logger from "../src/util/logger.js";
 import { assert } from "chai";
 import jwt from "jsonwebtoken";

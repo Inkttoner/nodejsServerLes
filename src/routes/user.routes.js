@@ -157,11 +157,6 @@ router.delete(
     controller.delete
 );
 
-// meal routes
-router.get("/api/meal", mealController.getAll);
-router.post("/api/meal", validateToken, mealController.create);
-router.get("/api/meal/:mealId", mealController.getById);
-router.delete("/api/meal/:mealId", validateToken, mealController.delete);
 router.use(notFound);
 
 export default router;
