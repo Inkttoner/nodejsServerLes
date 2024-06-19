@@ -8,21 +8,14 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.redirect("/api/info");
-});
-
-app.use(mealRouter);
-app.use(userRoutes);
-
-app.use((error, req, res, next) => {
-    res.status(error.status || 500).json({
-        status: error.status || 500,
-        message: error.message || "Internal Server Error",
+    res.json({
+        status: 200,
+        message: "Welcome to the meal API",
         data: {},
     });
 });
 
-app.get("/api/info", (req, res, next) => {
+app.get("/api/info", (req, res) => {
     res.json({
         status: 200,
         message: "System info",
@@ -33,6 +26,18 @@ app.get("/api/info", (req, res, next) => {
         },
     });
 });
+
+app.use(userRoutes);
+app.use(mealRouter);
+
+app.use((error, req, res, next) => {
+    res.status(error.status || 500).json({
+        status: error.status || 500,
+        message: error.message || "Internal Server Error",
+        data: {},
+    });
+});
+
 app.listen(port, () => {
     logger.info(`Server is running on port ${port}`);
 });
