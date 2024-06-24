@@ -87,7 +87,7 @@ const userController = {
             withPassword = true;
         }
         logger.info("UserController: get user by id");
-        userService.getById(userId, withPassword, (error, success) => {
+        userService.getUserById(userId, withPassword, (error, success) => {
             if (error) {
                 next({
                     status: error.status,

@@ -13,17 +13,6 @@ const CLEAR_USERS_TABLE = "DELETE IGNORE FROM `user`;";
 const CLEAR_DB =
     CLEAR_MEAL_TABLE + CLEAR_PARTICIPANTS_TABLE + CLEAR_USERS_TABLE;
 
-const hash = (password) => {
-    return new Promise((resolve, reject) => {
-        bcrypt.hash(password, 10, async (err, hashedPassword) => {
-            if (err) {
-                reject(err);
-            }
-            resolve(hashedPassword);
-        });
-    });
-};
-
 const INSERT_USER =
     "INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES" +
     `(1, "first", "last", "name@server.nl", "secret", "street", "city");`;
@@ -169,12 +158,12 @@ describe("UC-201 - UC-205", () => {
                 .request(server)
                 .post(endpointToTest)
                 .send({
-                    //firstName: "damian",
+                    //firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -197,12 +186,12 @@ describe("UC-201 - UC-205", () => {
                 .request(server)
                 .post(endpointToTest)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
                     emailAdress: "NotAValidEmail",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -225,12 +214,12 @@ describe("UC-201 - UC-205", () => {
                 .request(server)
                 .post(endpointToTest)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
                     password: "12",
-                    phoneNumber: "0612345678",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -257,8 +246,8 @@ describe("UC-201 - UC-205", () => {
                     lastName: "last",
                     emailAdress: "name@server.nl", // email already exists
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -283,8 +272,8 @@ describe("UC-201 - UC-205", () => {
                     lastName: "last",
                     emailAdress: "coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -551,12 +540,12 @@ describe("UC-201 - UC-205", () => {
                 .put(endpointToTest + "/1")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    //emailAdress: "damian@gmail.com",
+                    //emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -581,12 +570,12 @@ describe("UC-201 - UC-205", () => {
                 .put(endpointToTest + "/2")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -611,11 +600,11 @@ describe("UC-201 - UC-205", () => {
                 .put(endpointToTest + "/1")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
+                    password: "secret",
                     phoneNumber: "not a valid phone number",
                     roles: "editor",
                 })
@@ -641,12 +630,12 @@ describe("UC-201 - UC-205", () => {
                 .put(endpointToTest + "/3")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -668,12 +657,12 @@ describe("UC-201 - UC-205", () => {
                 .request(server)
                 .put(endpointToTest + "/2")
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {
@@ -698,12 +687,12 @@ describe("UC-201 - UC-205", () => {
                 .put(endpointToTest + "/1")
                 .set("Authorization", "Bearer " + token)
                 .send({
-                    firstName: "damian",
+                    firstName: "Coen",
                     lastName: "last",
-                    emailAdress: "damian@gmail.com",
+                    emailAdress: "Coen@gmail.com",
                     isActive: 1,
-                    password: "cool",
-                    phoneNumber: "0612345678",
+                    password: "secret",
+                    phoneNumber: "0625448571",
                     roles: "editor",
                 })
                 .end((err, res) => {

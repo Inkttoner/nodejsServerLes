@@ -157,7 +157,7 @@ const userService = {
         }
     },
 
-    getById: async (userId, withPassword, callback) => {
+    getUserById: async (userId, withPassword, callback) => {
         logger.trace(`UserService: get user with id ${userId}`);
         const queryString = withPassword ? `SELECT * FROM user WHERE id = ${userId};` :
             `SELECT firstName, LastName, isActive, emailAdress, phoneNumber, roles, city, street FROM user WHERE id = ${userId};`;

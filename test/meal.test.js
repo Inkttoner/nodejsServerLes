@@ -64,8 +64,8 @@ describe("UC-301 - UC-305", () => {
                     imgURL: "https://www.img.com",
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    //name: "food",
-                    description: "nice food",
+                    //name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -101,8 +101,8 @@ describe("UC-301 - UC-305", () => {
                     cookId: 1,
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    name: "food",
-                    description: "nice food",
+                    name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -137,8 +137,8 @@ describe("UC-301 - UC-305", () => {
                     imgURL: "https://www.img.com",
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    name: "food",
-                    description: "nice food",
+                    name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -182,8 +182,8 @@ describe("UC-301 - UC-305", () => {
                     imgURL: "https://www.img.com",
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    //name: "food",
-                    description: "nice food",
+                    //name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -219,8 +219,8 @@ describe("UC-301 - UC-305", () => {
                     cookId: 1,
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    name: "food",
-                    description: "nice food",
+                    name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -256,8 +256,8 @@ describe("UC-301 - UC-305", () => {
                     cookId: 1,
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    name: "food",
-                    description: "nice food",
+                    name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -293,8 +293,8 @@ describe("UC-301 - UC-305", () => {
                     cookId: 1,
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    name: "food",
-                    description: "nice food",
+                    name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
@@ -327,8 +327,8 @@ describe("UC-301 - UC-305", () => {
                     imgURL: "https://www.img.com",
                     createDate: "2023-12-31 14:30:00",
                     updateDate: "2023-12-31 14:30:00",
-                    name: "food",
-                    description: "nice food",
+                    name: "Spagetti",
+                    description: "nice Spagetti",
                     allergenes: "gluten",
                 })
                 .end((err, res) => {
