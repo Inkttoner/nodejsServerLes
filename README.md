@@ -18,4 +18,4 @@ To run the tests, type `npm test`.
 
 You can also test the endpoints in a program like Postman
 
-[Server] (coensserver.azurewebsites.net)
+[Server] (https://coensserver.azurewebsites.net/)
